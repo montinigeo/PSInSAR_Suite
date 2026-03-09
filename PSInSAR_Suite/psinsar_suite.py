@@ -1,0 +1,221 @@
+"""
+PSInSAR Suite — Plugin principale.
+
+Crea una toolbar dedicata con un'icona per ciascuno strumento:
+  [Load da File] [Ricarica quadro] | [EWUD] | [VIS] | [VN] [AA] [STS] [NL] [GEO]
+                  LOAD                                        TS
+
+Ordine da sinistra a destra: Load → EWUD → VIS → TS
+"""
+
+import os
+from qgis.PyQt.QtWidgets import QAction, QToolBar
+from qgis.PyQt.QtGui import QIcon
+from qgis.core import QgsMessageLog, Qgis
+
+
+class PSInSARSuite:
+
+    MENU_NAME  = '&PSInSAR Suite'
+    TOOLBAR_TITLE = 'PSInSAR Suite'
+
+    def __init__(self, iface):
+        self.iface       = iface
+        self.toolbar     = None
+        self._actions    = []          # tutte le QAction della toolbar
+        self._load_mod   = None        # LoadModule (gestisce segnali Qt)
+        self._ewud_dlg   = None        # EgmsDialog (instanziato a richiesta)
+        self._vis_dlg    = None        # PSInSARVISDialog (instanziato a richiesta)
+        self._ts_dlg     = None        # QDialog contenitore del tab TS
+
+    # ──────────────────────────────────────────────────────────────────────────
+    def initGui(self):
+        plugin_dir = os.path.dirname(__file__)
+        icons_dir  = os.path.join(plugin_dir, 'icons')
+
+        def icon(name):
+            p = os.path.join(icons_dir, name)
+            return QIcon(p) if os.path.exists(p) else QIcon()
+
+        # ── Pre-carica le librerie TS in background ───────────────────────────
+        # Le librerie pesanti (pandas, matplotlib, ecc.) vengono importate in un
+        # thread daemon così il primo utilizzo del modulo TS è immediato.
+        import threading
+        def _preload_ts_libs():
+            try:
+                import pandas, numpy, matplotlib, scipy, statsmodels, mplcursors
+            except Exception:
+                pass
+        threading.Thread(target=_preload_ts_libs, daemon=True).start()
+
+        # ── Crea la toolbar dedicata ──────────────────────────────────────────
+        self.toolbar = self.iface.mainWindow().addToolBar(self.TOOLBAR_TITLE)
+        self.toolbar.setObjectName('PSInSARSuiteToolbar')
+
+        # ── Inizializza modulo Load ────────────────────────────────────────────
+        from .modules.load.load_module import LoadModule
+        self._load_mod = LoadModule(self.iface)
+        self._load_mod.init()
+
+        # ── Definizione azioni ────────────────────────────────────────────────
+        # ┌───────────────────────────────────────────────────────────────────┐
+        # │  LOAD  │  EWUD  │  VIS  │  TS x5                                 │
+        # └───────────────────────────────────────────────────────────────────┘
+
+        actions_def = [
+            # --- LOAD ----------------------------------------------------------
+            {
+                'icon':    'Load_PS_FromFile.png',
+                'text':    'Carica PS da File',
+                'tooltip': 'Carica layer PS-InSAR da GeoPackage, Shapefile o GDB',
+                'slot':    self._run_load_file,
+                'section': 'LOAD',
+            },
+            {
+                'icon':    'Load_PS_FromProject.png',
+                'text':    'Ricarica Quadro di Unione',
+                'tooltip': 'Riattiva la selezione su un quadro già presente nel progetto',
+                'slot':    self._run_load_project,
+                'section': 'LOAD',
+            },
+            # --- EWUD ----------------------------------------------------------
+            {
+                'icon':    'icon_ewud.png',
+                'text':    'PSInSAR EWUD',
+                'tooltip': 'Crea Griglia PS e Decomposizione East-West / Up-Down',
+                'slot':    self._run_ewud,
+                'section': 'EWUD',
+            },
+            # --- VIS -----------------------------------------------------------
+            {
+                'icon':    'icon_vis.png',
+                'text':    'PSInSAR VIS',
+                'tooltip': 'Calcolo percentuale di movimento rilevabile (pc_mov)',
+                'slot':    self._run_vis,
+                'section': 'VIS',
+            },
+            # --- TS ------------------------------------------------------------
+            {
+                'icon':    'verifica_norm.png',
+                'text':    'TS – Verifica Normalità',
+                'tooltip': 'Distribuzione spostamenti e velocità con indici di normalità',
+                'slot':    lambda: self._run_ts_script(0),
+                'section': 'TS',
+            },
+            {
+                'icon':    'auto.png',
+                'text':    'TS – Analisi Automatica',
+                'tooltip': 'Analisi serie storica — serie media + layer temporaneo QGIS',
+                'slot':    lambda: self._run_ts_script(1),
+                'section': 'TS',
+            },
+            {
+                'icon':    'scomposizione.png',
+                'text':    'TS – Scomposizione',
+                'tooltip': 'Scomposizione serie storica in trend, stagionalità, residui',
+                'slot':    lambda: self._run_ts_script(2),
+                'section': 'TS',
+            },
+            {
+                'icon':    'non_lineare.png',
+                'text':    'TS – Analisi Non Lineare',
+                'tooltip': 'Analisi di linearità della serie storica (piecewise)',
+                'slot':    lambda: self._run_ts_script(3),
+                'section': 'TS',
+            },
+            {
+                'icon':    'geostatistica.png',
+                'text':    'TS – Geostatistica',
+                'tooltip': 'Analisi geostatistica: variogrammi, anisotropia e kriging',
+                'slot':    lambda: self._run_ts_script(4),
+                'section': 'TS',
+            },
+        ]
+
+        prev_section = None
+        for ad in actions_def:
+            # Separatore tra sezioni diverse
+            if prev_section is not None and ad['section'] != prev_section:
+                self.toolbar.addSeparator()
+
+            action = QAction(icon(ad['icon']), ad['text'], self.iface.mainWindow())
+            action.setToolTip(ad['tooltip'])
+            action.triggered.connect(ad['slot'])
+
+            self.toolbar.addAction(action)
+            self.iface.addPluginToMenu(self.MENU_NAME, action)
+            self._actions.append(action)
+
+            prev_section = ad['section']
+
+        QgsMessageLog.logMessage(
+            '✅ Plugin PSInSAR Suite caricato correttamente.',
+            'PSInSAR Suite', Qgis.Info
+        )
+
+    # ──────────────────────────────────────────────────────────────────────────
+    def unload(self):
+        # Rimuove le azioni dal menu e dalla toolbar
+        for action in self._actions:
+            self.iface.removePluginMenu(self.MENU_NAME, action)
+
+        if self.toolbar:
+            self.toolbar.clear()
+            self.iface.mainWindow().removeToolBar(self.toolbar)
+            self.toolbar = None
+
+        # Disconnette i segnali Qt del modulo Load
+        if self._load_mod:
+            self._load_mod.unload()
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Slot LOAD
+    # ──────────────────────────────────────────────────────────────────────────
+    def _run_load_file(self):
+        self._load_mod.run_from_file()
+
+    def _run_load_project(self):
+        self._load_mod.run_from_project()
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Slot EWUD
+    # ──────────────────────────────────────────────────────────────────────────
+    def _run_ewud(self):
+        from .modules.ewud.dialog import EgmsDialog
+        dlg = EgmsDialog(self.iface)
+        dlg.exec_()
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Slot VIS
+    # ──────────────────────────────────────────────────────────────────────────
+    def _run_vis(self):
+        from .modules.vis.dialog import PSInSARVISDialog
+        # show() non bloccante: l'utente può continuare a usare QGIS
+        self._vis_dlg = PSInSARVISDialog(self.iface)
+        self._vis_dlg.show()
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Slot TS
+    # ──────────────────────────────────────────────────────────────────────────
+    def _run_ts_script(self, script_idx):
+        """Esegue direttamente lo script TS richiesto.
+        Tutti i controlli (layer attivo, selezione, campi data) sono gestiti
+        internamente dagli script tramite QMessageBox."""
+        import os, runpy
+        from .modules.ts.ts_widget import SCRIPT_DEFS
+        from qgis.PyQt.QtWidgets import QMessageBox
+
+        sd = SCRIPT_DEFS[script_idx]
+        scripts_dir = os.path.join(os.path.dirname(__file__), 'modules', 'ts', 'scripts')
+        script_path = os.path.join(scripts_dir, sd['script'])
+
+        if not os.path.exists(script_path):
+            QMessageBox.critical(None, 'PSInSAR TS – Script non trovato', script_path)
+            return
+
+        try:
+            runpy.run_path(script_path, init_globals={'iface': self.iface})
+        except SystemExit:
+            pass  # uscita pulita dopo QMessageBox nello script
+        except Exception as e:
+            QMessageBox.critical(None, 'PSInSAR TS – Errore', f'{sd["err"]}:\n{e}')

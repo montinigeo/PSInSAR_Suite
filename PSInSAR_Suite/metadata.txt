@@ -1,0 +1,25 @@
+[general]
+name=PSInSAR Suite
+description=Integrated suite for loading, processing and analysis of PS-InSAR displacement data
+version=1.3
+qgisMinimumVersion=3.16
+qgisMaximumVersion=3.99
+author=Giovanni Montini
+email=g.montini@appenninosettentrionale.it
+about=PSInSAR Suite is an integrated QGIS plugin that brings together four tools for PS-InSAR (Persistent Scatterer Interferometric SAR) data analysis into a single dedicated toolbar.
+
+ - PSInSAR Load: loads PS-InSAR point layers from GeoPackage, Shapefile or GDB files using a polygon index layer, or reactivates an index already present in the project.
+ - PSInSAR EWUD: decomposes LOS velocities from ascending/descending Sentinel-1 (or other SAR) data into East-West and Up-Down components, with automatic resampling grid creation. Outputs include Na and Nd fields (number of PS points used per cell).
+ - PSInSAR VIS: calculates the detectable movement percentage (pc_mov) based on SAR acquisition geometry and terrain morphology derived from a DEM.
+ - PSInSAR TS: time series analysis tools including normality check, automatic kinematic analysis with mean series layer output, seasonal decomposition (STL), piecewise non-linear analysis, and geostatistical kriging.
+
+homepage=https://github.com/montinigeo/PSInSAR_Suite
+tracker=https://github.com/montinigeo/PSInSAR_Suite/issues
+repository=https://github.com/montinigeo/PSInSAR_Suite
+tags=InSAR, PS-InSAR, SAR, deformation, displacement, time series, EGMS, Sentinel-1, remote sensing, geohazard, subsidence, landslide
+icon=icons/icon_suite.png
+category=Analysis
+hasProcessingProvider=no
+experimental=yes
+deprecated=no
+server=no
