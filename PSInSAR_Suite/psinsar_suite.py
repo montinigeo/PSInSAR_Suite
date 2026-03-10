@@ -9,9 +9,33 @@ Ordine da sinistra a destra: Load → EWUD → VIS → TS
 """
 
 import os
-from qgis.PyQt.QtWidgets import QAction, QToolBar
+from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsMessageLog, Qgis
+
+# ── Verifica dipendenze all'avvio ─────────────────────────────────────────────
+_MISSING_DEPS = []
+for _dep in ['pandas', 'numpy', 'matplotlib', 'scipy',
+             'statsmodels', 'pyproj', 'pykrige', 'mplcursors', 'pwlf']:
+    try:
+        __import__(_dep)
+    except ImportError:
+        _MISSING_DEPS.append(_dep)
+
+if _MISSING_DEPS:
+    def _warn_missing():
+        QMessageBox.warning(
+            None,
+            'PSInSAR Suite – Dipendenze mancanti',
+            'Le seguenti librerie Python non sono installate:\n\n'
+            + '\n'.join(f'  • {d}' for d in _MISSING_DEPS)
+            + '\n\nIl modulo TS non funzionerà correttamente.\n\n'
+            'Per installarle:\n'
+            '• Windows: apri il terminale OSGeo4W e digita:\n'
+            '  pip install ' + ' '.join(_MISSING_DEPS) + '\n\n'
+            '• Linux/macOS: da terminale:\n'
+            '  pip install ' + ' '.join(_MISSING_DEPS)
+        )
 
 
 class PSInSARSuite:
@@ -47,6 +71,11 @@ class PSInSARSuite:
             except Exception:
                 pass
         threading.Thread(target=_preload_ts_libs, daemon=True).start()
+
+        # ── Avviso dipendenze mancanti ────────────────────────────────────────
+        if _MISSING_DEPS:
+            from qgis.PyQt.QtCore import QTimer
+            QTimer.singleShot(1000, _warn_missing)
 
         # ── Crea la toolbar dedicata ──────────────────────────────────────────
         self.toolbar = self.iface.mainWindow().addToolBar(self.TOOLBAR_TITLE)
