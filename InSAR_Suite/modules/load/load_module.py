@@ -1,5 +1,5 @@
 """
-Modulo Load per PSInSAR Suite.
+Modulo Load per InSAR Suite.
 Espone le due azioni di caricamento PS (da file e da progetto)
 come semplici metodi callable, senza registrare toolbar/menu propri
 (ci pensa il plugin principale).

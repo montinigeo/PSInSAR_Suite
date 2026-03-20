@@ -37,18 +37,18 @@ class DistribuzioneSpostamentiVelocita:
     def __init__(self):
         self.layer = iface.activeLayer()
         if not self.layer:
-            QMessageBox.warning(None, 'PSInSAR TS', 'Nessun layer PS attivo.\nSeleziona un layer PS puntuale nel pannello Layer prima di avviare l\'analisi.')
+            QMessageBox.warning(None, 'InSAR TS', 'Nessun layer PS attivo.\nSeleziona un layer PS puntuale nel pannello Layer prima di avviare l\'analisi.')
             return
         self.selected_features = self.layer.selectedFeatures()
         if not self.selected_features:
-            QMessageBox.warning(None, 'PSInSAR TS – Nessun PS selezionato!',
+            QMessageBox.warning(None, 'InSAR TS – Nessun PS selezionato!',
                 'Nessun punto PS selezionato nel layer attivo.\n\n'
                 'Seleziona uno o più punti PS sulla mappa con gli strumenti di selezione di QGIS, '
                 'poi avvia nuovamente l\'analisi.')
             return
         self.campi_date = [f.name() for f in self.layer.fields() if re.match(r"^D\d{8}$", f.name())]
         if not self.campi_date:
-            QMessageBox.warning(None, 'PSInSAR TS', 'Nessun campo data trovato nel layer.\nI campi delle date devono avere formato DYYYYMMDD (es. D20170101).')
+            QMessageBox.warning(None, 'InSAR TS', 'Nessun campo data trovato nel layer.\nI campi delle date devono avere formato DYYYYMMDD (es. D20170101).')
             return
 
         # Chiedi soglia correlazione se più di 1 PS selezionato
@@ -89,7 +89,7 @@ class DistribuzioneSpostamentiVelocita:
             ps_coerenti = df.loc[coerenti.values].reset_index(drop=True)
 
         if len(ps_coerenti) == 0:
-            QMessageBox.warning(None, 'PSInSAR TS – Nessun PS coerente trovato!',
+            QMessageBox.warning(None, 'InSAR TS – Nessun PS coerente trovato!',
                 'Nessun PS coerente trovato tra i punti selezionati.\n\n'
                 'Prova ad abbassare la soglia di correlazione oppure a selezionare '
                 'un\'area con PS cinematicamente più omogenei.')

@@ -1,5 +1,5 @@
 """
-Modulo TS (Time Series) per PSInSAR Suite.
+Modulo TS (Time Series) per InSAR Suite.
 
 Gestisce il tab delle analisi serie storiche. Poiché tutti gli script TS
 lavorano sul layer attivo + feature selezionate, questo modulo:
@@ -82,7 +82,7 @@ class TSWidget(QWidget):
         main.setSpacing(10)
 
         # ── Titolo ────────────────────────────────────────────────────────────
-        title = QLabel('PSInSAR TS  ·  Analisi Serie Storiche')
+        title = QLabel('InSAR TS  ·  Analisi Serie Storiche')
         title.setAlignment(Qt.AlignCenter)
         f = QFont(); f.setPointSize(12); f.setBold(True)
         title.setFont(f)
@@ -211,7 +211,7 @@ class TSWidget(QWidget):
         self._update_active_label()
         self._refresh_selection_count()
         self.iface.messageBar().pushMessage(
-            'PSInSAR Suite',
+            'InSAR Suite',
             f'Layer attivo impostato: {layer.name()}. '
             'Ora puoi selezionare i punti sulla mappa.',
             level=0, duration=6

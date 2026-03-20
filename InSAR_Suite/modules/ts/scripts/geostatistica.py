@@ -1,5 +1,5 @@
 # ============================================================
-# PSInSAR TS - Geostatistica
+# InSAR TS - Geostatistica
 # Raster kriging caricato come layer temporaneo in QGIS
 # (salvabile tramite pulsante nella finestra risultati)
 # ============================================================
@@ -45,7 +45,7 @@ class SceltaCampoDialog(QDialog):
     """
     def __init__(self):
         super().__init__(None)
-        self.setWindowTitle('PSInSAR TS – Geostatistica: scegli il valore da interpolare')
+        self.setWindowTitle('InSAR TS – Geostatistica: scegli il valore da interpolare')
         self.setMinimumWidth(420)
         layout = QVBoxLayout(self)
 
@@ -656,7 +656,7 @@ class GeostatisticaTask(QgsTask):
     I risultati vengono passati al thread principale tramite self.result.
     """
     def __init__(self, coords_m, vel, n_lags, ang_step, raster_epsg, label_valore):
-        super().__init__('PSInSAR TS – Geostatistica', QgsTask.CanCancel)
+        super().__init__('InSAR TS – Geostatistica', QgsTask.CanCancel)
         self.coords_m    = coords_m
         self.vel         = vel
         self.n_lags      = n_lags
@@ -758,7 +758,7 @@ class GeostatisticaTask(QgsTask):
 
     def finished(self, result):
         if not result or self.result is None:
-            QMessageBox.warning(None, 'PSInSAR TS – Geostatistica',
+            QMessageBox.warning(None, 'InSAR TS – Geostatistica',
                 f'Errore nel calcolo:\n{self.error_msg or "Errore sconosciuto"}')
             return
 
@@ -771,7 +771,7 @@ class GeostatisticaTask(QgsTask):
         if rl.isValid():
             QgsProject.instance().addMapLayer(rl)
         else:
-            QMessageBox.warning(None, 'PSInSAR TS – Kriging',
+            QMessageBox.warning(None, 'InSAR TS – Kriging',
                 'Impossibile caricare il raster temporaneo in QGIS.')
 
         # ── Genera grafici nel thread principale ──────────────────
@@ -835,13 +835,13 @@ class DistribuzioneSpostamentiVelocita:
     def __init__(self):
         self.layer = iface.activeLayer()
         if not self.layer:
-            QMessageBox.warning(None, 'PSInSAR TS',
+            QMessageBox.warning(None, 'InSAR TS',
                 'Nessun layer PS attivo.\n'
                 'Seleziona un layer PS puntuale nel pannello Layer prima di avviare l\'analisi.')
             return
         self.feat = list(self.layer.selectedFeatures())
         if not self.feat:
-            QMessageBox.warning(None, 'PSInSAR TS – Nessun PS selezionato!',
+            QMessageBox.warning(None, 'InSAR TS – Nessun PS selezionato!',
                 'Nessun punto PS selezionato nel layer attivo.\n\n'
                 'Seleziona uno o più punti PS sulla mappa con gli strumenti di selezione di QGIS, '
                 'poi avvia nuovamente l\'analisi.')
@@ -856,12 +856,12 @@ class DistribuzioneSpostamentiVelocita:
         self.scelta_tipo, self.scelta_campo = dlg_campo.getChoice()
 
         if self.scelta_tipo == 'ts' and not self.campi:
-            QMessageBox.warning(None, 'PSInSAR TS',
+            QMessageBox.warning(None, 'InSAR TS',
                 'Nessun campo data trovato nel layer.\n'
                 'I campi delle date devono avere formato DYYYYMMDD (es. D20170101).')
             return
         if self.scelta_tipo == 'field' and not self.scelta_campo:
-            QMessageBox.warning(None, 'PSInSAR TS', 'Nessun campo numerico selezionato.')
+            QMessageBox.warning(None, 'InSAR TS', 'Nessun campo numerico selezionato.')
             return
 
         self.run()
@@ -919,7 +919,7 @@ class DistribuzioneSpostamentiVelocita:
             _active_tasks.append(task)
             QgsApplication.taskManager().addTask(task)
             iface.messageBar().pushMessage(
-                'PSInSAR TS – Geostatistica',
+                'InSAR TS – Geostatistica',
                 'Calcolo avviato in background. QGIS rimane responsivo.',
                 level=0, duration=6)
 

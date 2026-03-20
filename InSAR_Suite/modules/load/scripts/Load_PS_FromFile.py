@@ -55,11 +55,11 @@ class LoadPS_FromFile:
         self.action = QAction(QIcon(icon_path), "Carica PS da File", self.iface.mainWindow())
         self.action.triggered.connect(self.run)
         self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu("PSInSAR Load", self.action)
+        self.iface.addPluginToMenu("InSAR Load", self.action)
 
     def unload(self):
         self.iface.removeToolBarIcon(self.action)
-        self.iface.removePluginMenu("PSInSAR Load", self.action)
+        self.iface.removePluginMenu("InSAR Load", self.action)
 
         for layer_id, handler in self.layer_selection_handlers.items():
             layer = QgsProject.instance().mapLayer(layer_id)

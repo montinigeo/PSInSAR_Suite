@@ -23,13 +23,13 @@ def main():
 
     layer = iface.activeLayer()
     if not layer:
-        QMessageBox.warning(None, 'PSInSAR TS',
+        QMessageBox.warning(None, 'InSAR TS',
             'Nessun layer PS attivo.\n'
             'Seleziona un layer PS puntuale nel pannello Layer prima di avviare l\'analisi.')
         return
     selected_features = layer.selectedFeatures()
     if not selected_features:
-        QMessageBox.warning(None, 'PSInSAR TS – Nessun PS selezionato!',
+        QMessageBox.warning(None, 'InSAR TS – Nessun PS selezionato!',
             'Nessun punto PS selezionato nel layer attivo.\n\n'
             'Seleziona uno o più punti PS sulla mappa con gli strumenti di selezione di QGIS, '
             'poi avvia nuovamente l\'analisi.')
@@ -55,7 +55,7 @@ def main():
 
     campi_date = [f.name() for f in layer.fields() if re.match(r"^D\d{8}$", f.name())]
     if not campi_date:
-        QMessageBox.warning(None, 'PSInSAR TS',
+        QMessageBox.warning(None, 'InSAR TS',
             'Nessun campo data trovato nel layer.\n'
             'I campi delle date devono avere formato DYYYYMMDD (es. D20170101).')
         return
@@ -69,7 +69,7 @@ def main():
     df = pd.DataFrame(records, columns=["CODE"] + campi_date)
 
     task = AnalisiCinematicaTask(
-        "PSInSAR TS - Scomposizione serie storiche",
+        "InSAR TS - Scomposizione serie storiche",
         df, date, soglia_corr, campi_date
     )
     _active_tasks.append(task)  # previene garbage collection
@@ -141,7 +141,7 @@ class AnalisiCinematicaTask(QgsTask):
     def finished(self, result):
         if not result or self.result is None:
             QgsMessageLog.logMessage("❌ Task fallito", "Cinematica", Qgis.Critical)
-            QMessageBox.critical(None, 'PSInSAR TS – Errore',
+            QMessageBox.critical(None, 'InSAR TS – Errore',
                 'Elaborazione non completata. Controlla il log di QGIS per i dettagli.')
             return
 
@@ -149,7 +149,7 @@ class AnalisiCinematicaTask(QgsTask):
         QgsMessageLog.logMessage(msg_info, "Cinematica", msg_level)
 
         if not do_plot or df_media is None:
-            QMessageBox.warning(None, 'PSInSAR TS – Nessun PS coerente trovato!',
+            QMessageBox.warning(None, 'InSAR TS – Nessun PS coerente trovato!',
                 f'Nessun PS coerente trovato tra i {n} punti selezionati.\n\n'
                 'Prova ad abbassare la soglia di correlazione oppure a selezionare '
                 'un\'area con PS cinematicamente più omogenei.')

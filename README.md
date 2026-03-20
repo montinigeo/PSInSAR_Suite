@@ -106,6 +106,14 @@ Please open an [Issue](../../issues) on GitHub to report bugs or suggest improve
 
 ---
 
+## Disclaimer
+
+PSInSAR Suite is an independent open-source QGIS plugin developed for post-processing analysis of PS-InSAR displacement data. It is **not affiliated with, endorsed by, or related to** TRE ALTAMIRA S.r.l., the Politecnico di Milano, or any other organisation involved in the development or commercialisation of PS-InSAR processing algorithms. The term "PS-InSAR" (Persistent Scatterer Interferometric SAR) is used here exclusively in its generic scientific meaning, as widely adopted in the open literature.
+
+The results produced by this plugin are intended as a support tool for hazard and risk analysis (landslide, subsidence) and must always be evaluated in conjunction with other base data and verified in the field by a qualified professional.
+
+---
+
 ## License
 
 This plugin is released under the [GNU General Public License v2 or later](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html), in compliance with QGIS licensing requirements.

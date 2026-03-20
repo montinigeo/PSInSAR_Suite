@@ -1,5 +1,5 @@
 # ============================================================
-# PSInSAR TS - Analisi cinematica PS selezionati
+# InSAR TS - Analisi cinematica PS selezionati
 # Layer temporaneo in QGIS con serie media (salvabile dall'utente)
 # ============================================================
 import pandas as pd
@@ -56,13 +56,13 @@ def main():
 
     layer = iface.activeLayer()
     if not layer:
-        QMessageBox.warning(None, 'PSInSAR TS',
+        QMessageBox.warning(None, 'InSAR TS',
             'Nessun layer PS attivo.\n'
             'Seleziona un layer PS puntuale nel pannello Layer prima di avviare l\'analisi.')
         return
     selected_features = layer.selectedFeatures()
     if not selected_features:
-        QMessageBox.warning(None, 'PSInSAR TS – Nessun PS selezionato!',
+        QMessageBox.warning(None, 'InSAR TS – Nessun PS selezionato!',
             'Nessun punto PS selezionato nel layer attivo.\n\n'
             'Seleziona uno o più punti PS sulla mappa con gli strumenti di selezione di QGIS, '
             'poi avvia nuovamente l\'analisi.')
@@ -71,7 +71,7 @@ def main():
 
     campi_date = [f.name() for f in layer.fields() if re.match(r"^D\d{8}$", f.name())]
     if not campi_date:
-        QMessageBox.warning(None, 'PSInSAR TS',
+        QMessageBox.warning(None, 'InSAR TS',
             'Nessun campo data trovato nel layer.\n'
             'I campi delle date devono avere formato DYYYYMMDD (es. D20170101).')
         return
@@ -94,7 +94,7 @@ def main():
     df = pd.DataFrame(records, columns=["CODE"] + campi_date)
 
     task = AnalisiCinematicaTask(
-        "PSInSAR TS - Analisi cinematica PS selezionati",
+        "InSAR TS - Analisi cinematica PS selezionati",
         df, date, soglia_corr, campi_date
     )
     _active_tasks.append(task)  # previene garbage collection
@@ -162,23 +162,23 @@ class AnalisiCinematicaTask(QgsTask):
             return True
 
         except Exception as e:
-            QgsMessageLog.logMessage(f"Errore task: {str(e)}", "PSInSAR TS", Qgis.Critical)
+            QgsMessageLog.logMessage(f"Errore task: {str(e)}", "InSAR TS", Qgis.Critical)
             return False
 
     def finished(self, result):
         if not result or self.result is None:
-            QgsMessageLog.logMessage("❌ Task fallito", "PSInSAR TS", Qgis.Critical)
-            QMessageBox.critical(None, 'PSInSAR TS – Errore',
+            QgsMessageLog.logMessage("❌ Task fallito", "InSAR TS", Qgis.Critical)
+            QMessageBox.critical(None, 'InSAR TS – Errore',
                 'Elaborazione non completata. Controlla il log di QGIS per i dettagli.')
             return
 
         ps_coerenti, df_media, msg_info, msg_level, do_plot, n_tot = self.result
         n_coer = len(ps_coerenti)
 
-        QgsMessageLog.logMessage(msg_info, "PSInSAR TS", msg_level)
+        QgsMessageLog.logMessage(msg_info, "InSAR TS", msg_level)
 
         if not do_plot or df_media is None:
-            QMessageBox.warning(None, 'PSInSAR TS – Nessun PS coerente trovato!',
+            QMessageBox.warning(None, 'InSAR TS – Nessun PS coerente trovato!',
                 f'Nessun PS coerente trovato tra i {n_tot} punti selezionati.\n\n'
                 'Prova ad abbassare la soglia di correlazione oppure a selezionare '
                 'un\'area con PS cinematicamente più omogenei.')
@@ -227,7 +227,7 @@ class AnalisiCinematicaTask(QgsTask):
             QgsProject.instance().addMapLayer(vl)
 
             iface.messageBar().pushMessage(
-                "PSInSAR TS",
+                "InSAR TS",
                 f"Layer temporaneo 'Serie_media_PS_coerenti' caricato ({len(df_media)} date). "
                 "Tasto destro > Esporta per salvarlo su disco.",
                 level=Qgis.Info, duration=10
@@ -235,13 +235,13 @@ class AnalisiCinematicaTask(QgsTask):
             QgsMessageLog.logMessage(
                 f"✅ Layer temporaneo caricato: {len(df_media)} record, "
                 f"{n_coer} PS coerenti su {n_tot} selezionati.",
-                "PSInSAR TS", Qgis.Info
+                "InSAR TS", Qgis.Info
             )
 
         except Exception as e:
             QgsMessageLog.logMessage(
                 f"⚠️ Impossibile creare il layer temporaneo: {str(e)}",
-                "PSInSAR TS", Qgis.Warning
+                "InSAR TS", Qgis.Warning
             )
 
     def _mostra_grafico(self, df_media, n_tot, n_coer):

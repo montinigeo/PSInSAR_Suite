@@ -301,7 +301,7 @@ class PSInSARTask(QgsTask):
     # finished() chiama on_done/on_error/on_cancelled direttamente (main thread)
 
     def __init__(self, params, on_done, on_error, on_cancelled):
-        super().__init__("PSInSAR VIS", QgsTask.CanCancel)
+        super().__init__("InSAR VIS", QgsTask.CanCancel)
         self.params       = params
         self._result      = None
         self._error       = None
@@ -561,7 +561,7 @@ class PSInSARVISDialog(QDialog):
         self.iface    = iface
         self.task     = None
         self._closing = False   # True quando chiusura con task attivo
-        self.setWindowTitle("PSInSAR VIS  v1.8")
+        self.setWindowTitle("InSAR VIS  v1.8")
         self.setMinimumWidth(580)
         self._build_ui()
         self._connect_signals()

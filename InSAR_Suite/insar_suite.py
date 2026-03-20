@@ -1,5 +1,5 @@
 """
-PSInSAR Suite — Plugin principale.
+InSAR Suite — Plugin principale.
 
 Crea una toolbar dedicata con un'icona per ciascuno strumento:
   [Load da File] [Ricarica quadro] | [EWUD] | [VIS] | [VN] [AA] [STS] [NL] [GEO]
@@ -26,7 +26,7 @@ if _MISSING_DEPS:
     def _warn_missing():
         QMessageBox.warning(
             None,
-            'PSInSAR Suite – Dipendenze mancanti',
+            'InSAR Suite – Dipendenze mancanti',
             'Le seguenti librerie Python non sono installate:\n\n'
             + '\n'.join(f'  • {d}' for d in _MISSING_DEPS)
             + '\n\nIl modulo TS non funzionerà correttamente.\n\n'
@@ -38,10 +38,10 @@ if _MISSING_DEPS:
         )
 
 
-class PSInSARSuite:
+class InSARSuite:
 
-    MENU_NAME  = '&PSInSAR Suite'
-    TOOLBAR_TITLE = 'PSInSAR Suite'
+    MENU_NAME  = '&InSAR Suite'
+    TOOLBAR_TITLE = 'InSAR Suite'
 
     def __init__(self, iface):
         self.iface       = iface
@@ -79,7 +79,7 @@ class PSInSARSuite:
 
         # ── Crea la toolbar dedicata ──────────────────────────────────────────
         self.toolbar = self.iface.mainWindow().addToolBar(self.TOOLBAR_TITLE)
-        self.toolbar.setObjectName('PSInSARSuiteToolbar')
+        self.toolbar.setObjectName('InSARSuiteToolbar')
 
         # ── Inizializza modulo Load ────────────────────────────────────────────
         from .modules.load.load_module import LoadModule
@@ -110,7 +110,7 @@ class PSInSARSuite:
             # --- EWUD ----------------------------------------------------------
             {
                 'icon':    'icon_ewud.png',
-                'text':    'PSInSAR EWUD',
+                'text':    'InSAR EWUD',
                 'tooltip': 'Crea Griglia PS e Decomposizione East-West / Up-Down',
                 'slot':    self._run_ewud,
                 'section': 'EWUD',
@@ -118,7 +118,7 @@ class PSInSARSuite:
             # --- VIS -----------------------------------------------------------
             {
                 'icon':    'icon_vis.png',
-                'text':    'PSInSAR VIS',
+                'text':    'InSAR VIS',
                 'tooltip': 'Calcolo percentuale di movimento rilevabile (pc_mov)',
                 'slot':    self._run_vis,
                 'section': 'VIS',
@@ -178,8 +178,8 @@ class PSInSARSuite:
             prev_section = ad['section']
 
         QgsMessageLog.logMessage(
-            '✅ Plugin PSInSAR Suite caricato correttamente.',
-            'PSInSAR Suite', Qgis.Info
+            '✅ Plugin InSAR Suite caricato correttamente.',
+            'InSAR Suite', Qgis.Info
         )
 
     # ──────────────────────────────────────────────────────────────────────────
@@ -239,7 +239,7 @@ class PSInSARSuite:
         script_path = os.path.join(scripts_dir, sd['script'])
 
         if not os.path.exists(script_path):
-            QMessageBox.critical(None, 'PSInSAR TS – Script non trovato', script_path)
+            QMessageBox.critical(None, 'InSAR TS – Script non trovato', script_path)
             return
 
         try:
@@ -247,4 +247,4 @@ class PSInSARSuite:
         except SystemExit:
             pass  # uscita pulita dopo QMessageBox nello script
         except Exception as e:
-            QMessageBox.critical(None, 'PSInSAR TS – Errore', f'{sd["err"]}:\n{e}')
+            QMessageBox.critical(None, 'InSAR TS – Errore', f'{sd["err"]}:\n{e}')
