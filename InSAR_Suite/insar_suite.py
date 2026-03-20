@@ -49,7 +49,7 @@ class InSARSuite:
         self._actions    = []          # tutte le QAction della toolbar
         self._load_mod   = None        # LoadModule (gestisce segnali Qt)
         self._ewud_dlg   = None        # EgmsDialog (instanziato a richiesta)
-        self._vis_dlg    = None        # PSInSARVISDialog (instanziato a richiesta)
+        self._vis_dlg    = None        # InSARVISDialog (instanziato a richiesta)
         self._ts_dlg     = None        # QDialog contenitore del tab TS
 
     # ──────────────────────────────────────────────────────────────────────────
@@ -218,9 +218,9 @@ class InSARSuite:
     # Slot VIS
     # ──────────────────────────────────────────────────────────────────────────
     def _run_vis(self):
-        from .modules.vis.dialog import PSInSARVISDialog
+        from .modules.vis.dialog import InSARVISDialog
         # show() non bloccante: l'utente può continuare a usare QGIS
-        self._vis_dlg = PSInSARVISDialog(self.iface)
+        self._vis_dlg = InSARVISDialog(self.iface)
         self._vis_dlg.show()
 
     # ──────────────────────────────────────────────────────────────────────────

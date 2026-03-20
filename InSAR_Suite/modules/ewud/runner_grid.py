@@ -212,9 +212,9 @@ class GridRunner(QThread):
             final = outputs['final']
             if isinstance(final, QgsVectorLayer):
                 grid_layer = final
-                grid_layer.setName('PSInSAR_Grid')
+                grid_layer.setName('InSAR_Grid')
             elif isinstance(final, str):
-                grid_layer = QgsVectorLayer(final, 'PSInSAR_Grid', 'ogr')
+                grid_layer = QgsVectorLayer(final, 'InSAR_Grid', 'ogr')
             else:
                 grid_layer = None
 

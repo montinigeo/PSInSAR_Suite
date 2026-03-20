@@ -290,7 +290,7 @@ def _calc_pc_mov(aspect_vals, slope_vals, azimut, off_nadir):
 
 # ── QgsTask ────────────────────────────────────────────────────────────────────
 
-class PSInSARTask(QgsTask):
+class InSARTask(QgsTask):
     """
     Task QGIS nativo: sicuro, non blocca la UI, annullabile.
     Usa solo GDAL/numpy — zero processing.run().
@@ -554,14 +554,14 @@ class PSInSARTask(QgsTask):
 
 # ── Dialog ─────────────────────────────────────────────────────────────────────
 
-class PSInSARVISDialog(QDialog):
+class InSARVISDialog(QDialog):
 
     def __init__(self, iface, parent=None):
         super().__init__(parent)
         self.iface    = iface
         self.task     = None
         self._closing = False   # True quando chiusura con task attivo
-        self.setWindowTitle("InSAR VIS  v1.8")
+        self.setWindowTitle("InSAR VIS  v2.0")
         self.setMinimumWidth(580)
         self._build_ui()
         self._connect_signals()
@@ -893,7 +893,7 @@ class PSInSARVISDialog(QDialog):
         self.progress.setValue(0)
         self.lbl_step.setText("Avvio elaborazione...")
 
-        self.task = PSInSARTask(
+        self.task = InSARTask(
             params,
             on_done      = self._on_finished,
             on_error     = self._on_error,

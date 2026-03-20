@@ -1,5 +1,5 @@
 """
-Dialogo principale del plugin PSInSAR_EWUD.
+Dialogo principale del plugin InSAR_EWUD.
 
 Struttura:
   Tab 1 – Crea Griglia PS      (create_grid_asc_desc)
@@ -274,7 +274,7 @@ class EgmsDialog(QDialog):
         self.thread  = None
         self.worker  = None
 
-        self.setWindowTitle('PSInSAR_EWUD')
+        self.setWindowTitle('InSAR_EWUD')
         _icon_path = os.path.join(os.path.dirname(__file__), '..', '..', 'icons', 'icon_ewud.png')
         self.setWindowIcon(QIcon(_icon_path))
         self.setMinimumSize(520, 380)
@@ -291,7 +291,7 @@ class EgmsDialog(QDialog):
         main_layout.setContentsMargins(12, 12, 12, 12)
 
         # Logo/titolo
-        title = QLabel('PSInSAR_EWUD  ·  East-West / Up-Down Decomposition')
+        title = QLabel('InSAR_EWUD  ·  East-West / Up-Down Decomposition')
         title.setAlignment(Qt.AlignCenter)
         f = QFont(); f.setPointSize(13); f.setBold(True)
         title.setFont(f)
@@ -718,8 +718,8 @@ class EgmsDialog(QDialog):
 
         # Mappa nome layer → file QML da applicare
         QML_MAP = {
-            'Centroidi_EWUD': os.path.join(plugin_dir, 'psinsar_ewud_centroidi.qml'),
-            'Poligoni_EWUD':  os.path.join(plugin_dir, 'psinsar_ewud_poligoni.qml'),
+            'Centroidi_EWUD': os.path.join(plugin_dir, 'insar_ewud_centroidi.qml'),
+            'Poligoni_EWUD':  os.path.join(plugin_dir, 'insar_ewud_poligoni.qml'),
         }
 
         # Raccoglie i layer validi indicizzati per nome

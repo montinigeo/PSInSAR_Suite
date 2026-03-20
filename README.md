@@ -16,13 +16,8 @@ InSAR Suite è un plugin QGIS che raccoglie in un'unica toolbar dedicata quattro
 |--------|-------------|
 | **InSAR Load** | Caricamento layer PS da GeoPackage, Shapefile o GDB tramite un quadro di unione poligonale, con attivazione automatica al clic su mappa. Supporta anche il ricaricamento di un quadro già presente nel progetto. |
 | **InSAR EWUD** | Decomposizione East-West / Up-Down delle velocità LOS da coppie ascending/descending. Preset satellitari inclusi (Sentinel-1 EGMS, ERS/Envisat, COSMO-SkyMed, TerraSAR-X, ALOS). Output con campi Na e Nd (numero PS per cella). |
-<<<<<<< HEAD
 | **InSAR VIS** | Calcolo della percentuale di movimento rilevabile (pc_mov) in funzione della geometria SAR e della morfologia del terreno (Aspect/Slope da DEM). Elaborazione tramite QgsTask (GUI non bloccante). |
 | **InSAR TS** | Analisi serie storiche: verifica normalità, serie media automatica (con layer temporaneo in QGIS), scomposizione STL, analisi non lineare piecewise (pwlf), geostatistica e kriging. |
-=======
-| **PSInSAR VIS** | Calcolo della percentuale di movimento rilevabile (pc_mov) in funzione della geometria SAR e della morfologia del terreno (Aspect/Slope da DEM). Elaborazione tramite QgsTask (GUI non bloccante). |
-| **PSInSAR TS** | Analisi serie storiche: verifica normalità, serie media automatica (con layer temporaneo in QGIS), scomposizione STL, analisi non lineare piecewise (pwlf), geostatistica e kriging. |
->>>>>>> c3f0ec78737439be356b0dbd408463f5c20343d2
 
 ### Requisiti
 
