@@ -1,4 +1,4 @@
-# PSInSAR Suite
+# InSAR Suite
 
 **Plugin QGIS per l'analisi dei dati PS-InSAR / QGIS plugin for PS-InSAR data analysis**
 
@@ -8,16 +8,16 @@
 
 ### Descrizione
 
-PSInSAR Suite è un plugin QGIS che raccoglie in un'unica toolbar dedicata quattro strumenti per l'analisi dei dati PS-InSAR (Persistent Scatterer Interferometric SAR). Il plugin nasce per semplificare il flusso di lavoro nell'analisi di dataset nazionali (es. EGMS Italia) e locali, coprendo tutte le fasi dall'acquisizione dati alla visualizzazione avanzata delle serie storiche.
+InSAR Suite è un plugin QGIS che raccoglie in un'unica toolbar dedicata quattro strumenti per l'analisi dei dati PS-InSAR (Persistent Scatterer Interferometric SAR). Il plugin nasce per semplificare il flusso di lavoro nell'analisi di dataset nazionali (es. EGMS Italia) e locali, coprendo tutte le fasi dall'acquisizione dati alla visualizzazione avanzata delle serie storiche.
 
 ### Moduli
 
 | Modulo | Descrizione |
 |--------|-------------|
-| **PSInSAR Load** | Caricamento layer PS da GeoPackage, Shapefile o GDB tramite un quadro di unione poligonale, con attivazione automatica al clic su mappa. Supporta anche il ricaricamento di un quadro già presente nel progetto. |
-| **PSInSAR EWUD** | Decomposizione East-West / Up-Down delle velocità LOS da coppie ascending/descending. Preset satellitari inclusi (Sentinel-1 EGMS, ERS/Envisat, COSMO-SkyMed, TerraSAR-X, ALOS). Output con campi Na e Nd (numero PS per cella). |
-| **PSInSAR VIS** | Calcolo della percentuale di movimento rilevabile (pc_mov) in funzione della geometria SAR e della morfologia del terreno (Aspect/Slope da DEM). Elaborazione tramite QgsTask (GUI non bloccante). |
-| **PSInSAR TS** | Analisi serie storiche: verifica normalità, serie media automatica (con layer temporaneo in QGIS), scomposizione STL, analisi non lineare piecewise (pwlf), geostatistica e kriging. |
+| **InSAR Load** | Caricamento layer PS da GeoPackage, Shapefile o GDB tramite un quadro di unione poligonale, con attivazione automatica al clic su mappa. Supporta anche il ricaricamento di un quadro già presente nel progetto. |
+| **InSAR EWUD** | Decomposizione East-West / Up-Down delle velocità LOS da coppie ascending/descending. Preset satellitari inclusi (Sentinel-1 EGMS, ERS/Envisat, COSMO-SkyMed, TerraSAR-X, ALOS). Output con campi Na e Nd (numero PS per cella). |
+| **InSAR VIS** | Calcolo della percentuale di movimento rilevabile (pc_mov) in funzione della geometria SAR e della morfologia del terreno (Aspect/Slope da DEM). Elaborazione tramite QgsTask (GUI non bloccante). |
+| **InSAR TS** | Analisi serie storiche: verifica normalità, serie media automatica (con layer temporaneo in QGIS), scomposizione STL, analisi non lineare piecewise (pwlf), geostatistica e kriging. |
 
 ### Requisiti
 
@@ -33,8 +33,7 @@ PSInSAR Suite è un plugin QGIS che raccoglie in un'unica toolbar dedicata quatt
 
 **Dal QGIS Plugin Repository:**
 1. In QGIS: *Plugin → Gestisci e installa plugin*
-2. Spunta "Mostra plugin sperimentali"
-3. Cerca "PSInSAR Suite" e installa
+2. Cerca "InSAR Suite" e installa
 
 ### Utilizzo rapido
 
@@ -59,16 +58,16 @@ Apri una [Issue](../../issues) su GitHub per segnalare problemi o proporre migli
 
 ### Description
 
-PSInSAR Suite is a QGIS plugin that consolidates four PS-InSAR (Persistent Scatterer Interferometric SAR) analysis tools into a single dedicated toolbar. It is designed to streamline the analysis workflow for national (e.g. EGMS Italy) and local PS-InSAR datasets, covering all stages from data loading to advanced time series analysis.
+InSAR Suite is a QGIS plugin that consolidates four PS-InSAR (Persistent Scatterer Interferometric SAR) analysis tools into a single dedicated toolbar. It is designed to streamline the analysis workflow for national (e.g. EGMS Italy) and local PS-InSAR datasets, covering all stages from data loading to advanced time series analysis.
 
 ### Modules
 
 | Module | Description |
 |--------|-------------|
-| **PSInSAR Load** | Loads PS-InSAR point layers from GeoPackage, Shapefile or GDB using a polygon index layer, with automatic loading on map selection. Also supports reactivation of an index already loaded in the project. |
-| **PSInSAR EWUD** | East-West / Up-Down decomposition of LOS velocities from ascending/descending pairs. Includes satellite presets (Sentinel-1 EGMS, ERS/Envisat, COSMO-SkyMed, TerraSAR-X, ALOS). Output includes Na and Nd fields (PS count per cell). |
-| **PSInSAR VIS** | Calculates detectable movement percentage (pc_mov) based on SAR acquisition geometry and terrain morphology (Aspect/Slope from DEM). Runs as a QgsTask (non-blocking GUI). |
-| **PSInSAR TS** | Time series analysis: normality check, automatic mean series (with temporary QGIS layer output), STL seasonal decomposition, piecewise non-linear analysis (pwlf), geostatistics and ordinary kriging. |
+| **InSAR Load** | Loads PS-InSAR point layers from GeoPackage, Shapefile or GDB using a polygon index layer, with automatic loading on map selection. Also supports reactivation of an index already loaded in the project. |
+| **InSAR EWUD** | East-West / Up-Down decomposition of LOS velocities from ascending/descending pairs. Includes satellite presets (Sentinel-1 EGMS, ERS/Envisat, COSMO-SkyMed, TerraSAR-X, ALOS). Output includes Na and Nd fields (PS count per cell). |
+| **InSAR VIS** | Calculates detectable movement percentage (pc_mov) based on SAR acquisition geometry and terrain morphology (Aspect/Slope from DEM). Runs as a QgsTask (non-blocking GUI). |
+| **InSAR TS** | Time series analysis: normality check, automatic mean series (with temporary QGIS layer output), STL seasonal decomposition, piecewise non-linear analysis (pwlf), geostatistics and ordinary kriging. |
 
 ### Requirements
 
@@ -84,8 +83,7 @@ PSInSAR Suite is a QGIS plugin that consolidates four PS-InSAR (Persistent Scatt
 
 **From QGIS Plugin Repository:**
 1. In QGIS: *Plugins → Manage and Install Plugins*
-2. Check "Show experimental plugins"
-3. Search for "PSInSAR Suite" and install
+2. Search for "InSAR Suite" and install
 
 ### Quick start
 
@@ -108,7 +106,7 @@ Please open an [Issue](../../issues) on GitHub to report bugs or suggest improve
 
 ## Disclaimer
 
-PSInSAR Suite is an independent open-source QGIS plugin developed for post-processing analysis of PS-InSAR displacement data. It is **not affiliated with, endorsed by, or related to** TRE ALTAMIRA S.r.l., the Politecnico di Milano, or any other organisation involved in the development or commercialisation of PS-InSAR processing algorithms. The term "PS-InSAR" (Persistent Scatterer Interferometric SAR) is used here exclusively in its generic scientific meaning, as widely adopted in the open literature.
+InSAR Suite is an independent open-source QGIS plugin developed for post-processing analysis of PS-InSAR displacement data. It is **not affiliated with, endorsed by, or related to** TRE ALTAMIRA S.r.l., the Politecnico di Milano, or any other organisation involved in the development or commercialisation of PS-InSAR processing algorithms. The term "PS-InSAR" (Persistent Scatterer Interferometric SAR) is used here exclusively in its generic scientific meaning, as widely adopted in the open literature.
 
 The results produced by this plugin are intended as a support tool for hazard and risk analysis (landslide, subsidence) and must always be evaluated in conjunction with other base data and verified in the field by a qualified professional.
 
