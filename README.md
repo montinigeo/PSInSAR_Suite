@@ -1,6 +1,6 @@
 # InSAR Suite
 
-**Plugin QGIS per l'analisi dei dati PS-InSAR / QGIS plugin for PS-InSAR data analysis**
+**Plugin QGIS per l'analisi dei dati PSI / QGIS plugin for PSI data analysis**
 
 ---
 
@@ -8,7 +8,7 @@
 
 ### Descrizione
 
-InSAR Suite è un plugin QGIS che raccoglie in un'unica toolbar dedicata quattro strumenti per l'analisi dei dati PS-InSAR (Persistent Scatterer Interferometric SAR). Il plugin nasce per semplificare il flusso di lavoro nell'analisi di dataset nazionali (es. EGMS Italia) e locali, coprendo tutte le fasi dall'acquisizione dati alla visualizzazione avanzata delle serie storiche.
+InSAR Suite è un plugin QGIS che raccoglie in un'unica toolbar dedicata quattro strumenti per l'analisi dei dati PSI (Persistent Scatterer Interferometry). Il plugin nasce per semplificare il flusso di lavoro nell'analisi di dataset nazionali (es. EGMS Italia) e locali, coprendo tutte le fasi dall'acquisizione dati alla visualizzazione avanzata delle serie storiche.
 
 ### Moduli
 
@@ -58,13 +58,13 @@ Apri una [Issue](../../issues) su GitHub per segnalare problemi o proporre migli
 
 ### Description
 
-InSAR Suite is a QGIS plugin that consolidates four PS-InSAR (Persistent Scatterer Interferometric SAR) analysis tools into a single dedicated toolbar. It is designed to streamline the analysis workflow for national (e.g. EGMS Italy) and local PS-InSAR datasets, covering all stages from data loading to advanced time series analysis.
+InSAR Suite is a QGIS plugin that consolidates four PSI (Persistent Scatterer Interferometry) analysis tools into a single dedicated toolbar. It is designed to streamline the analysis workflow for national (e.g. EGMS Italy) and local PSI datasets, covering all stages from data loading to advanced time series analysis.
 
 ### Modules
 
 | Module | Description |
 |--------|-------------|
-| **InSAR Load** | Loads PS-InSAR point layers from GeoPackage, Shapefile or GDB using a polygon index layer, with automatic loading on map selection. Also supports reactivation of an index already loaded in the project. |
+| **InSAR Load** | Loads PSI point layers from GeoPackage, Shapefile or GDB using a polygon index layer, with automatic loading on map selection. Also supports reactivation of an index already loaded in the project. |
 | **InSAR EWUD** | East-West / Up-Down decomposition of LOS velocities from ascending/descending pairs. Includes satellite presets (Sentinel-1 EGMS, ERS/Envisat, COSMO-SkyMed, TerraSAR-X, ALOS). Output includes Na and Nd fields (PS count per cell). |
 | **InSAR VIS** | Calculates detectable movement percentage (pc_mov) based on SAR acquisition geometry and terrain morphology (Aspect/Slope from DEM). Runs as a QgsTask (non-blocking GUI). |
 | **InSAR TS** | Time series analysis: normality check, automatic mean series (with temporary QGIS layer output), STL seasonal decomposition, piecewise non-linear analysis (pwlf), geostatistics and ordinary kriging. |

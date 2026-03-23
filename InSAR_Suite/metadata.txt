@@ -1,14 +1,14 @@
 [general]
 name=InSAR Suite
-description=Integrated suite for loading, processing and analysis of PS-InSAR displacement data
-version=2.0.1
+description=Integrated suite for loading, processing and analysis of PSI displacement data
+version=2.1
 qgisMinimumVersion=3.16
 qgisMaximumVersion=3.99
 author=Giovanni Montini
 email=g.montini@appenninosettentrionale.it
-about=InSAR Suite is an integrated QGIS plugin that brings together four tools for PS-InSAR (Persistent Scatterer Interferometric SAR) data analysis into a single dedicated toolbar.
+about=InSAR Suite is an integrated QGIS plugin that brings together four tools for PSI (Persistent Scatterer Interferometry) data analysis into a single dedicated toolbar.
 
- - InSAR Load: loads PS-InSAR point layers from GeoPackage, Shapefile or GDB files using a polygon index layer, or reactivates an index already present in the project.
+ - InSAR Load: loads PSI point layers from GeoPackage, Shapefile or GDB files using a polygon index layer, or reactivates an index already present in the project.
  - InSAR EWUD: decomposes LOS velocities from ascending/descending Sentinel-1 (or other SAR) data into East-West and Up-Down components, with automatic resampling grid creation. Outputs include Na and Nd fields (number of PS points used per cell).
  - InSAR VIS: calculates the detectable movement percentage (pc_mov) based on SAR acquisition geometry and terrain morphology derived from a DEM.
  - InSAR TS: time series analysis tools including normality check, automatic kinematic analysis with mean series layer output, seasonal decomposition (STL), piecewise non-linear analysis, and geostatistical kriging.
