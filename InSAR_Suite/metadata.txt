@@ -1,7 +1,7 @@
 [general]
 name=InSAR Suite
 description=Integrated suite for loading, processing and analysis of PSI displacement data
-version=2.1
+version=3.0
 qgisMinimumVersion=3.16
 qgisMaximumVersion=3.99
 author=Giovanni Montini
@@ -11,13 +11,13 @@ about=InSAR Suite is an integrated QGIS plugin that brings together four tools f
  - InSAR Load: loads PSI point layers from GeoPackage, Shapefile or GDB files using a polygon index layer, or reactivates an index already present in the project.
  - InSAR EWUD: decomposes LOS velocities from ascending/descending Sentinel-1 (or other SAR) data into East-West and Up-Down components, with automatic resampling grid creation. Outputs include Na and Nd fields (number of PS points used per cell).
  - InSAR VIS: calculates the detectable movement percentage (pc_mov) based on SAR acquisition geometry and terrain morphology derived from a DEM.
- - InSAR TS: time series analysis tools including normality check, automatic kinematic analysis with mean series layer output, seasonal decomposition (STL), piecewise non-linear analysis, and geostatistical kriging.
+ - InSAR TS: time series analysis tools including data quality and homogeneity check, automatic kinematic analysis with mean series layer output, seasonal decomposition (STL), piecewise non-linear analysis, temporal anomaly detection, and multi-zone comparison.
 
 homepage=https://github.com/montinigeo/InSAR_Suite
 tracker=https://github.com/montinigeo/InSAR_Suite/issues
 repository=https://github.com/montinigeo/InSAR_Suite
-tags=InSAR, PS-InSAR, SAR, deformation, displacement, time series, EGMS, Sentinel-1, remote sensing, geohazard, subsidence, landslide
-pip_dependencies=pandas,numpy,matplotlib,scipy,statsmodels,pyproj,pykrige,mplcursors,pwlf
+tags=InSAR, PSI, persistent scatterer, SAR, deformation, displacement, time series, EGMS, Sentinel-1, remote sensing, geohazard, subsidence, landslide
+pip_dependencies=pandas,numpy,matplotlib,scipy,statsmodels,pyproj,mplcursors,pwlf
 icon=icons/icon_suite.png
 category=Analysis
 hasProcessingProvider=no

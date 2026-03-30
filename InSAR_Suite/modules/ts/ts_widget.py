@@ -29,11 +29,11 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), 'scripts')
 
 SCRIPT_DEFS = [
     {
-        'label':   'Verifica Normalità',
-        'tooltip': 'Distribuzione spostamenti e velocità con indici di normalità',
-        'icon':    'verifica_norm.png',
-        'script':  'verifica_norm.py',
-        'err':     'Errore verifica normalità',
+        'label':   'Qualità del dato',
+        'tooltip': 'Analisi qualità e omogeneità dei PS selezionati (velocità, outlier)',
+        'icon':    'normalita.png',
+        'script':  'qualita_dato.py',
+        'err':     'Errore analisi qualità dato',
     },
     {
         'label':   'Analisi Automatica',
@@ -57,11 +57,18 @@ SCRIPT_DEFS = [
         'err':     'Errore analisi non lineare',
     },
     {
-        'label':   'Geostatistica',
-        'tooltip': 'Analisi geostatistica: variogrammi, anisotropia e kriging',
-        'icon':    'geostatistica.png',
-        'script':  'geostatistica.py',
-        'err':     'Errore geostatistica',
+        'label':   'Anomalie temporali',
+        'tooltip': 'Rilevamento acquisizioni anomale nella serie storica media',
+        'icon':    'anomalie.png',
+        'script':  'anomalie_temporali.py',
+        'err':     'Errore rilevamento anomalie',
+    },
+    {
+        'label':   'Confronto tra zone',
+        'tooltip': 'Confronto serie storiche medie tra due o tre zone diverse',
+        'icon':    'confronto.png',
+        'script':  'confronto_zone.py',
+        'err':     'Errore confronto zone',
     },
 ]
 

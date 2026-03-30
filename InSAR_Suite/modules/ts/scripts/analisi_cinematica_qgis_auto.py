@@ -56,9 +56,10 @@ def main():
 
     layer = iface.activeLayer()
     if not layer:
-        QMessageBox.warning(None, 'InSAR TS',
-            'Nessun layer PS attivo.\n'
-            'Seleziona un layer PS puntuale nel pannello Layer prima di avviare l\'analisi.')
+        QMessageBox.warning(None, 'InSAR TS – Layer non attivo',
+            'Nessun layer PS attivo.\n\n'
+            'Per attivarlo: clicca sul layer PS nel pannello Layer '
+            '(evidenziato in blu), poi riavvia l\'analisi.')
         return
     selected_features = layer.selectedFeatures()
     if not selected_features:
@@ -81,10 +82,9 @@ def main():
         soglia_corr = soglia_corr_default
     else:
         dlg = SogliaDialog()
-        if dlg.exec_() == QDialog.Accepted:
-            soglia_corr = dlg.getValue()
-        else:
-            soglia_corr = soglia_corr_default
+        if dlg.exec_() != QDialog.Accepted:
+            return  # utente ha annullato
+        soglia_corr = dlg.getValue()
 
     records = []
     for feat in selected_features:
@@ -125,13 +125,17 @@ class AnalisiCinematicaTask(QgsTask):
                 corr_df = None
                 msg_info = "ℹ️ Analisi di un singolo PS."
             else:
-                corr_matrix = np.full((n, n), np.nan)
-                for i in range(n):
-                    serie_i = valori.iloc[i].values.astype(float)
-                    for j in range(i, n):
-                        serie_j = valori.iloc[j].values.astype(float)
-                        c = corr_valid(serie_i, serie_j)
-                        corr_matrix[i, j] = corr_matrix[j, i] = c
+                # Matrice di correlazione vettorizzata — O(n*t) invece di O(n²*t)
+                arr_c = valori.to_numpy(dtype=float)
+                arr_c = np.where(np.isnan(arr_c), 0.0, arr_c)
+                std_r = np.std(arr_c, axis=1, ddof=1)
+                valid_r = std_r > 0
+                if np.sum(valid_r) > 1:
+                    corr_matrix = np.corrcoef(arr_c)
+                    corr_matrix[~valid_r, :] = np.nan
+                    corr_matrix[:, ~valid_r] = np.nan
+                else:
+                    corr_matrix = np.full((n, n), np.nan)
                 corr_df = pd.DataFrame(corr_matrix, columns=self.df["CODE"], index=self.df["CODE"])
                 mask_valid = (corr_df >= self.soglia_corr)
                 coerenti = mask_valid.sum(axis=1) >= (n / 2)
@@ -184,10 +188,7 @@ class AnalisiCinematicaTask(QgsTask):
                 'un\'area con PS cinematicamente più omogenei.')
             return
 
-        # ======== LAYER TEMPORANEO IN QGIS ========
-        self._carica_layer_temporaneo(df_media, n_tot, n_coer)
-
-        # ======== GRAFICO ========
+        # ======== GRAFICO (il layer è caricabile dall'utente dal pulsante) ========
         self._mostra_grafico(df_media, n_tot, n_coer)
 
     def _carica_layer_temporaneo(self, df_media, n_tot, n_coer):
@@ -247,7 +248,16 @@ class AnalisiCinematicaTask(QgsTask):
     def _mostra_grafico(self, df_media, n_tot, n_coer):
         plt.close('all')
         fig, ax = plt.subplots(figsize=(10, 6))
-        ax.set_facecolor("#f7f7f7")
+        fig.patch.set_facecolor('white')
+        ax.set_facecolor('#f5f5f5')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_color('#cccccc')
+        ax.spines['bottom'].set_color('#cccccc')
+        ax.tick_params(colors='#444444')
+        ax.yaxis.label.set_color('#444444')
+        ax.xaxis.label.set_color('#444444')
+        ax.title.set_color('#222222')
 
         std_media_const = np.nanmean(df_media["dev_standard"].values)
 
@@ -338,7 +348,41 @@ class AnalisiCinematicaTask(QgsTask):
             ha="center", fontsize=10, color="dimgray"
         )
         plt.tight_layout(rect=[0, 0.05, 1, 1])
+
+        # ── Pulsante "Carica tabella in QGIS" nella toolbar matplotlib ────────
+        # Nota: il callback matplotlib gira in un thread separato rispetto a Qt.
+        # Usiamo QTimer.singleShot(0, ...) per rimandare l'esecuzione al thread
+        # principale Qt, dove le API QGIS possono operare in modo sicuro.
+        from matplotlib.widgets import Button as MplButton
+        from qgis.PyQt.QtCore import QTimer
+        ax_btn = fig.add_axes([0.78, 0.01, 0.20, 0.04])
+        btn_layer = MplButton(ax_btn, 'Carica tabella in QGIS',
+                              color='#2980b9', hovercolor='#3498db')
+        btn_layer.label.set_color('white')
+        btn_layer.label.set_fontsize(8)
+
+        def on_carica(event):
+            QTimer.singleShot(0, lambda: self._carica_layer_temporaneo(
+                df_media, n_tot, n_coer))
+        btn_layer.on_clicked(on_carica)
+        # Mantiene riferimento per evitare garbage collection
+        self._btn_layer = btn_layer
+
         plt.show()
+
+        # Ridimensiona all'80% dello schermo disponibile
+        try:
+            from qgis.PyQt.QtWidgets import QApplication as _QApp
+            _geo = _QApp.primaryScreen().availableGeometry()
+            _mgr = plt.get_current_fig_manager()
+            if hasattr(_mgr, "window"):
+                _mgr.window.resize(int(_geo.width() * 0.80),
+                                   int(_geo.height() * 0.80))
+                _mgr.window.move(
+                    int(_geo.left() + _geo.width()  * 0.10),
+                    int(_geo.top()  + _geo.height() * 0.10))
+        except Exception:
+            pass
 
 
 main()

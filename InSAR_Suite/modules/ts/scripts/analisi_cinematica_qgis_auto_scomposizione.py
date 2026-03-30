@@ -23,9 +23,10 @@ def main():
 
     layer = iface.activeLayer()
     if not layer:
-        QMessageBox.warning(None, 'InSAR TS',
-            'Nessun layer PS attivo.\n'
-            'Seleziona un layer PS puntuale nel pannello Layer prima di avviare l\'analisi.')
+        QMessageBox.warning(None, 'InSAR TS – Layer non attivo',
+            'Nessun layer PS attivo.\n\n'
+            'Per attivarlo: clicca sul layer PS nel pannello Layer '
+            '(evidenziato in blu), poi riavvia l\'analisi.')
         return
     selected_features = layer.selectedFeatures()
     if not selected_features:
@@ -46,12 +47,7 @@ def main():
             value=default_soglia, min=0.0, max=1.0, decimals=2
         )
         if not ok:
-            soglia_corr = default_soglia
-            iface.messageBar().pushMessage(
-                "Info",
-                f"Nessun valore inserito, si usa la soglia predefinita {default_soglia}.",
-                level=Qgis.Info, duration=4
-            )
+            return  # utente ha annullato
 
     campi_date = [f.name() for f in layer.fields() if re.match(r"^D\d{8}$", f.name())]
     if not campi_date:
@@ -100,15 +96,17 @@ class AnalisiCinematicaTask(QgsTask):
                 corr_df = None
                 msg_info = "ℹ️ Analisi di un singolo PS: eseguita regressione lineare e calcolo velocità media."
             else:
-                # Matrice correlazione
-                corr_matrix = np.full((n, n), np.nan)
-                for i in range(n):
-                    serie_i = valori.iloc[i].values.astype(float)
-                    for j in range(i, n):
-                        serie_j = valori.iloc[j].values.astype(float)
-                        c = corr_valid(serie_i, serie_j)
-                        corr_matrix[i, j] = corr_matrix[j, i] = c
-
+                # Matrice di correlazione vettorizzata — O(n*t) invece di O(n²*t)
+                arr_c = valori.to_numpy(dtype=float)
+                arr_c = np.where(np.isnan(arr_c), 0.0, arr_c)
+                std_r = np.std(arr_c, axis=1, ddof=1)
+                valid_r = std_r > 0
+                if np.sum(valid_r) > 1:
+                    corr_matrix = np.corrcoef(arr_c)
+                    corr_matrix[~valid_r, :] = np.nan
+                    corr_matrix[:, ~valid_r] = np.nan
+                else:
+                    corr_matrix = np.full((n, n), np.nan)
                 corr_df = pd.DataFrame(corr_matrix, columns=self.df["CODE"], index=self.df["CODE"])
                 mask_valid = (corr_df >= self.soglia_corr)
                 coerenti = mask_valid.sum(axis=1) >= (n / 2)
@@ -168,7 +166,14 @@ class AnalisiCinematicaTask(QgsTask):
 
             plt.close('all')
             fig, axes = plt.subplots(3, 1, figsize=(9, 6), sharex=True)
-            fig.patch.set_facecolor("#f2f2f2")
+            fig.patch.set_facecolor('white')
+            for ax in axes:
+                ax.set_facecolor('#f5f5f5')
+                ax.spines['top'].set_visible(False)
+                ax.spines['right'].set_visible(False)
+                ax.spines['left'].set_color('#cccccc')
+                ax.spines['bottom'].set_color('#cccccc')
+                ax.tick_params(colors='#444444')
             ax_trend, ax_seasonal, ax_resid = axes
 
             # TREND
@@ -206,6 +211,20 @@ class AnalisiCinematicaTask(QgsTask):
             # Layout ottimizzato per aumentare altezza grafici, con margine inferiore piccolo e spaziatura verticale aumentata
             plt.tight_layout(rect=[0, 0.05, 1, 0.93], h_pad=3.0)
             plt.show()
+
+            # Ridimensiona all'80% dello schermo disponibile
+            try:
+                from qgis.PyQt.QtWidgets import QApplication as _QApp
+                _geo = _QApp.primaryScreen().availableGeometry()
+                _mgr = plt.get_current_fig_manager()
+                if hasattr(_mgr, "window"):
+                    _mgr.window.resize(int(_geo.width() * 0.80),
+                                       int(_geo.height() * 0.80))
+                    _mgr.window.move(
+                        int(_geo.left() + _geo.width()  * 0.10),
+                        int(_geo.top()  + _geo.height() * 0.10))
+            except Exception:
+                pass
 
         except Exception as e:
             QgsMessageLog.logMessage(f"⚠️ Impossibile scomporre la serie storica: {str(e)}", "Cinematica", Qgis.Warning)

@@ -9,8 +9,9 @@ Ordine da sinistra a destra: Load → EWUD → VIS → TS
 """
 
 import os
-from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox
+from qgis.PyQt.QtWidgets import QAction, QToolBar, QMessageBox, QWidget
 from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsMessageLog, Qgis
 
 # ── Verifica dipendenze all'avvio ─────────────────────────────────────────────
@@ -88,7 +89,7 @@ class InSARSuite:
 
         # ── Definizione azioni ────────────────────────────────────────────────
         # ┌───────────────────────────────────────────────────────────────────┐
-        # │  LOAD  │  EWUD  │  VIS  │  TS x5                                 │
+        # │  LOAD  │  EWUD  │  VIS  │  TS x6                                 │
         # └───────────────────────────────────────────────────────────────────┘
 
         actions_def = [
@@ -125,9 +126,9 @@ class InSARSuite:
             },
             # --- TS ------------------------------------------------------------
             {
-                'icon':    'verifica_norm.png',
-                'text':    'TS – Verifica Normalità',
-                'tooltip': 'Distribuzione spostamenti e velocità con indici di normalità',
+                'icon':    'normalita.png',
+                'text':    'TS – Qualità del dato',
+                'tooltip': 'Analisi qualità e omogeneità dei PS selezionati',
                 'slot':    lambda: self._run_ts_script(0),
                 'section': 'TS',
             },
@@ -153,19 +154,35 @@ class InSARSuite:
                 'section': 'TS',
             },
             {
-                'icon':    'geostatistica.png',
-                'text':    'TS – Geostatistica',
-                'tooltip': 'Analisi geostatistica: variogrammi, anisotropia e kriging',
+                'icon':    'anomalie.png',
+                'text':    'TS – Anomalie temporali',
+                'tooltip': 'Rilevamento acquisizioni anomale nella serie storica',
                 'slot':    lambda: self._run_ts_script(4),
+                'section': 'TS',
+            },
+            {
+                'icon':    'confronto.png',
+                'text':    'TS – Confronto zone',
+                'tooltip': 'Confronto serie storiche medie tra zone diverse',
+                'slot':    lambda: self._run_ts_script(5),
                 'section': 'TS',
             },
         ]
 
         prev_section = None
         for ad in actions_def:
-            # Separatore tra sezioni diverse
+            # Separatore colorato tra sezioni diverse
             if prev_section is not None and ad['section'] != prev_section:
-                self.toolbar.addSeparator()
+                sep = QWidget()
+                sep.setFixedWidth(8)
+                sep.setStyleSheet(
+                    'QWidget {'
+                    '  border-left: 2px solid #3498db;'
+                    '  margin-top: 4px;'
+                    '  margin-bottom: 4px;'
+                    '}'
+                )
+                self.toolbar.addWidget(sep)
 
             action = QAction(icon(ad['icon']), ad['text'], self.iface.mainWindow())
             action.setToolTip(ad['tooltip'])
