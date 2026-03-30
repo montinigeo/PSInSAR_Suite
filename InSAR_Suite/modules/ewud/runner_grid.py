@@ -147,13 +147,21 @@ class GridRunner(QThread):
                 crs_use    = ps_crs
 
             else:
-                # ══ PS metrici (o stesso CRS) ═════════════════════════════════
-                ps_asc_w   = ps_asc
-                ps_desc_w  = ps_desc
+                # ══ PS metrici (o stesso CRS del progetto) ════════════════════
+                # Se i PS hanno CRS diverso dal progetto, li riproiettiamo
+                if ps_crs != proj_crs:
+                    self._warn(feedback,
+                        f'PS in {ps_crs.authid()}, progetto in {proj_crs.authid()}: '
+                        f'riproiezione PS nel CRS del progetto.')
+                    ps_asc_w  = _reproject(ps_asc,  proj_crs, ctx, feedback)
+                    ps_desc_w = _reproject(ps_desc, proj_crs, ctx, feedback)
+                else:
+                    ps_asc_w  = ps_asc
+                    ps_desc_w = ps_desc
                 extent_use = extent_proj
                 cell_use_h = cell_m
                 cell_use_v = cell_m
-                crs_use    = ps_crs
+                crs_use    = proj_crs
 
             # ── Step 2 – Indici spaziali sui PS ───────────────────────────────
             feedback.next_step('Creazione indici spaziali PS…')

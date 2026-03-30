@@ -74,11 +74,35 @@ class EwudRunner(QThread):
             feedback.pushInfo(f'Cd_e={Cd_e:.8f}  Cd_u={Cd_u:.8f}')
             feedback.pushInfo(f'A={A:.8f}  B={B:.8f}  D={D:.8f}')
 
+            # ── Riproiezione PS nel CRS della griglia (se necessario) ─────────
+            from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+            grid_crs = griglia.crs()
+            ps_asc_w  = p['ps_asc']
+            ps_desc_w = p['ps_desc']
+            if ps_asc_w.crs() != grid_crs:
+                feedback.pushInfo(
+                    f'Riproiezione PS ascending da {ps_asc_w.crs().authid()} '
+                    f'a {grid_crs.authid()} per join spaziale…')
+                r = processing.run('native:reprojectlayer', {
+                    'INPUT': ps_asc_w, 'TARGET_CRS': grid_crs,
+                    'OUTPUT': 'TEMPORARY_OUTPUT',
+                }, context=ctx, feedback=feedback, is_child_algorithm=False)
+                ps_asc_w = r['OUTPUT']
+            if ps_desc_w.crs() != grid_crs:
+                feedback.pushInfo(
+                    f'Riproiezione PS descending da {ps_desc_w.crs().authid()} '
+                    f'a {grid_crs.authid()} per join spaziale…')
+                r = processing.run('native:reprojectlayer', {
+                    'INPUT': ps_desc_w, 'TARGET_CRS': grid_crs,
+                    'OUTPUT': 'TEMPORARY_OUTPUT',
+                }, context=ctx, feedback=feedback, is_child_algorithm=False)
+                ps_desc_w = r['OUTPUT']
+
             # ── Indici spaziali ───────────────────────────────────────────────
             feedback.next_step('Indici spaziali su PS e griglia…')
-            self._index(p['ps_asc'],  ctx, feedback)
-            self._index(p['ps_desc'], ctx, feedback)
-            self._index(griglia,      ctx, feedback)
+            self._index(ps_asc_w,  ctx, feedback)
+            self._index(ps_desc_w, ctx, feedback)
+            self._index(griglia,   ctx, feedback)
 
             # ══════════════════════════════════════════════════════════════════
             # FASE 1 — Media Va e Vd per cella con joinbylocationsummary
@@ -90,7 +114,7 @@ class EwudRunner(QThread):
             feedback.next_step('Media Va e conteggio Na per cella (join spaziale ascending)…')
             stat_asc = self._run('qgis:joinbylocationsummary', {
                 'INPUT':          griglia,
-                'JOIN':           p['ps_asc'],
+                'JOIN':           ps_asc_w,
                 'JOIN_FIELDS':    [vel_asc],
                 'PREDICATE':      [0],          # intersects
                 'SUMMARIES':      [0, 6],       # count=0, mean=6
@@ -101,7 +125,7 @@ class EwudRunner(QThread):
             feedback.next_step('Media Vd e conteggio Nd per cella (join spaziale descending)…')
             stat_desc = self._run('qgis:joinbylocationsummary', {
                 'INPUT':          griglia,
-                'JOIN':           p['ps_desc'],
+                'JOIN':           ps_desc_w,
                 'JOIN_FIELDS':    [vel_desc],
                 'PREDICATE':      [0],
                 'SUMMARIES':      [0, 6],       # count=0, mean=6

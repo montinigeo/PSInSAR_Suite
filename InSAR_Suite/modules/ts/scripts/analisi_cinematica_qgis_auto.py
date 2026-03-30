@@ -279,14 +279,18 @@ class AnalisiCinematicaTask(QgsTask):
 
         std_media_const = np.nanmean(df_media["dev_standard"].values)
 
+        dates_np   = df_media["data"].to_numpy()
+        deform_np  = df_media["deformazione_media"].to_numpy(dtype=float)
+        std_np     = df_media["dev_standard"].to_numpy(dtype=float)
+
         label_media = "Serie media coerente"
         line_media, = ax.plot(
-            df_media["data"], df_media["deformazione_media"],
+            dates_np, deform_np,
             color='firebrick', linewidth=1.5, label=label_media
         )
 
-        x = (df_media["data"] - df_media["data"].iloc[0]).dt.days / 365.25
-        y = df_media["deformazione_media"].values
+        x = (df_media["data"] - df_media["data"].iloc[0]).dt.days.to_numpy(dtype=float) / 365.25
+        y = deform_np
         r2_text = ""
         line_fit_media = None
 
