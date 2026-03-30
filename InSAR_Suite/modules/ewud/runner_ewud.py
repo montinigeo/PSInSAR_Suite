@@ -74,29 +74,42 @@ class EwudRunner(QThread):
             feedback.pushInfo(f'Cd_e={Cd_e:.8f}  Cd_u={Cd_u:.8f}')
             feedback.pushInfo(f'A={A:.8f}  B={B:.8f}  D={D:.8f}')
 
-            # ── Riproiezione PS nel CRS della griglia (se necessario) ─────────
-            from qgis.core import QgsCoordinateReferenceSystem, QgsProject
-            grid_crs = griglia.crs()
+            # ── Allineamento CRS PS → griglia (con ritaglio preventivo) ──────
+            from qgis.core import QgsCoordinateReferenceSystem, QgsProject, QgsCoordinateTransform
+            grid_crs  = griglia.crs()
+            grid_ext  = griglia.extent()
             ps_asc_w  = p['ps_asc']
             ps_desc_w = p['ps_desc']
-            if ps_asc_w.crs() != grid_crs:
-                feedback.pushInfo(
-                    f'Riproiezione PS ascending da {ps_asc_w.crs().authid()} '
-                    f'a {grid_crs.authid()} per join spaziale…')
-                r = processing.run('native:reprojectlayer', {
-                    'INPUT': ps_asc_w, 'TARGET_CRS': grid_crs,
+
+            def _align_ps(ps_layer, label):
+                """Ritaglia all'area della griglia e riproietta se necessario."""
+                ps_crs = ps_layer.crs()
+                # Converti l'estensione della griglia nel CRS del layer PS
+                xform = QgsCoordinateTransform(grid_crs, ps_crs, QgsProject.instance())
+                ext_in_ps_crs = xform.transformBoundingBox(grid_ext)
+                # Ritaglia al solo subset nell'area di lavoro
+                feedback.pushInfo(f'Ritaglio {label} all\'area della griglia…')
+                r = processing.run('native:extractbyextent', {
+                    'INPUT':  ps_layer,
+                    'EXTENT': ext_in_ps_crs,
+                    'CLIP':   False,
                     'OUTPUT': 'TEMPORARY_OUTPUT',
                 }, context=ctx, feedback=feedback, is_child_algorithm=False)
-                ps_asc_w = r['OUTPUT']
-            if ps_desc_w.crs() != grid_crs:
-                feedback.pushInfo(
-                    f'Riproiezione PS descending da {ps_desc_w.crs().authid()} '
-                    f'a {grid_crs.authid()} per join spaziale…')
-                r = processing.run('native:reprojectlayer', {
-                    'INPUT': ps_desc_w, 'TARGET_CRS': grid_crs,
-                    'OUTPUT': 'TEMPORARY_OUTPUT',
-                }, context=ctx, feedback=feedback, is_child_algorithm=False)
-                ps_desc_w = r['OUTPUT']
+                clipped = r['OUTPUT']
+                # Riproietta se CRS diverso
+                if ps_crs != grid_crs:
+                    feedback.pushInfo(
+                        f'Riproiezione {label} da {ps_crs.authid()} '
+                        f'a {grid_crs.authid()}…')
+                    r = processing.run('native:reprojectlayer', {
+                        'INPUT': clipped, 'TARGET_CRS': grid_crs,
+                        'OUTPUT': 'TEMPORARY_OUTPUT',
+                    }, context=ctx, feedback=feedback, is_child_algorithm=False)
+                    return r['OUTPUT']
+                return clipped
+
+            ps_asc_w  = _align_ps(p['ps_asc'],  'PS ascending')
+            ps_desc_w = _align_ps(p['ps_desc'], 'PS descending')
 
             # ── Indici spaziali ───────────────────────────────────────────────
             feedback.next_step('Indici spaziali su PS e griglia…')
