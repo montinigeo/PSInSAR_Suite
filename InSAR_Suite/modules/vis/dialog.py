@@ -301,7 +301,7 @@ class InSARTask(QgsTask):
     # finished() chiama on_done/on_error/on_cancelled direttamente (main thread)
 
     def __init__(self, params, on_done, on_error, on_cancelled):
-        super().__init__("InSAR VIS", QgsTask.CanCancel)
+        super().__init__("InSAR VIS", QgsTask.CanCancel if hasattr(QgsTask, "CanCancel") else QgsTask.Flag.CanCancel)
         self.params       = params
         self._result      = None
         self._error       = None

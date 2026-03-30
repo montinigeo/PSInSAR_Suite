@@ -123,7 +123,7 @@ def main():
 # ================= QGIS TASK =================
 class AnalisiCinematicaTask(QgsTask):
     def __init__(self, description, df, date, soglia_corr, campi_date):
-        super().__init__(description, QgsTask.CanCancel)
+        super().__init__(description, QgsTask.CanCancel if hasattr(QgsTask, "CanCancel") else QgsTask.Flag.CanCancel)
         self.df = df.copy()
         self.date = date
         self.soglia_corr = soglia_corr
@@ -298,7 +298,7 @@ class AnalisiCinematicaTask(QgsTask):
             a_media, b_media = np.polyfit(x, y, 1)
             y_fit_media = np.polyval([a_media, b_media], x)
             line_fit_media = ax.plot(
-                df_media["data"], y_fit_media, 'steelblue', linewidth=1.2,
+                dates_np, y_fit_media, 'steelblue', linewidth=1.2,
                 label=f"Trend lineare (V = {a_media:.2f} mm/anno)"
             )[0]
             residui = y - y_fit_media
@@ -310,8 +310,8 @@ class AnalisiCinematicaTask(QgsTask):
         if n_coer > 1:
             upper_std = df_media["deformazione_media"] + df_media["dev_standard"]
             lower_std = df_media["deformazione_media"] - df_media["dev_standard"]
-            line_std_upper = ax.plot(df_media["data"], upper_std, color='firebrick', linestyle='--', linewidth=0.8)
-            line_std_lower = ax.plot(df_media["data"], lower_std, color='firebrick', linestyle='--', linewidth=0.8)
+            line_std_upper = ax.plot(dates_np, upper_std, color='firebrick', linestyle='--', linewidth=0.8)
+            line_std_lower = ax.plot(dates_np, lower_std, color='firebrick', linestyle='--', linewidth=0.8)
 
         titolo_base = (
             "Serie storica del PS selezionato" if n_coer == 1

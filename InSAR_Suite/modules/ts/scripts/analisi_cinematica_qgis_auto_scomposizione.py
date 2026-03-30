@@ -94,7 +94,7 @@ def main():
 # ================= QGIS TASK =================
 class AnalisiCinematicaTask(QgsTask):
     def __init__(self, description, df, date, soglia_corr, campi_date):
-        super().__init__(description, QgsTask.CanCancel)
+        super().__init__(description, QgsTask.CanCancel if hasattr(QgsTask, "CanCancel") else QgsTask.Flag.CanCancel)
         self.df = df.copy()
         self.date = date
         self.soglia_corr = soglia_corr

@@ -149,7 +149,7 @@ class GridRunner(QThread):
             else:
                 # ══ PS metrici (o stesso CRS del progetto) ════════════════════
                 # Se i PS hanno CRS diverso dal progetto, li riproiettiamo
-                if ps_crs != proj_crs:
+                if ps_crs.authid() != proj_crs.authid():
                     self._warn(feedback,
                         f'PS in {ps_crs.authid()}, progetto in {proj_crs.authid()}: '
                         f'riproiezione PS nel CRS del progetto.')
