@@ -39,6 +39,13 @@ class DistribuzioneSpostamentiVelocita:
         if not self.layer:
             QMessageBox.warning(None, 'InSAR TS', 'Nessun layer PS attivo.\nSeleziona un layer PS puntuale nel pannello Layer prima di avviare l\'analisi.')
             return
+        from qgis.core import QgsVectorLayer
+        if not isinstance(self.layer, QgsVectorLayer):
+            QMessageBox.warning(None, 'InSAR TS – Layer non valido',
+                'Il layer attivo non e un layer vettoriale PS.\n\n'
+                'Seleziona un layer PS puntuale nel pannello Layer '
+                '(clicca su di esso per renderlo attivo), poi riavvia l\'analisi.')
+            return
         self.selected_features = self.layer.selectedFeatures()
         if not self.selected_features:
             QMessageBox.warning(None, 'InSAR TS – Nessun PS selezionato!',

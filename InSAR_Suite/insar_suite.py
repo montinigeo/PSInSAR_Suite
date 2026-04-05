@@ -201,6 +201,13 @@ class InSARSuite:
 
     # ──────────────────────────────────────────────────────────────────────────
     def unload(self):
+        # Chiude tutte le finestre matplotlib prima che Qt le distrugga
+        # per evitare crash "access violation" alla chiusura di QGIS
+        try:
+            import matplotlib.pyplot as plt
+            plt.close('all')
+        except Exception:
+            pass
         # Rimuove le azioni dal menu e dalla toolbar
         for action in self._actions:
             self.iface.removePluginMenu(self.MENU_NAME, action)

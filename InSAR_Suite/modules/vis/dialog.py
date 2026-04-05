@@ -676,6 +676,13 @@ class InSARVISDialog(QDialog):
             return
 
         dem_crs  = dem.crs()
+        if not dem_crs.isValid():
+            QMessageBox.warning(self, "Attenzione",
+                "Il DEM selezionato non ha un sistema di riferimento (CRS) definito.\n\n"
+                "Imposta il CRS del DEM con:\n"
+                "Layer -> Proprieta -> Sorgente -> CRS\n"
+                "oppure usare Raster -> Proiezioni -> Assegna proiezione.")
+            return
         ps_crs   = ps.crs()
         work_crs = QgsCoordinateReferenceSystem("EPSG:32632") \
                    if dem_crs.isGeographic() else dem_crs

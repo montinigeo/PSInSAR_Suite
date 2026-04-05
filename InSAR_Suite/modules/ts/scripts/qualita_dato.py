@@ -105,6 +105,13 @@ class QualitaDato:
             'Per attivarlo: clicca sul layer PS nel pannello Layer '
             '(evidenziato in blu), poi riavvia l\'analisi.')
             return
+        from qgis.core import QgsVectorLayer
+        if not isinstance(layer, QgsVectorLayer):
+            QMessageBox.warning(None, 'InSAR TS – Layer non valido',
+                'Il layer attivo non e un layer vettoriale PS.\n\n'
+                'Seleziona un layer PS puntuale nel pannello Layer '
+                "(clicca su di esso per renderlo attivo), poi riavvia l'analisi.")
+            return
 
         feats = list(layer.selectedFeatures())
         if not feats:
