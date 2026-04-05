@@ -29,39 +29,44 @@ gdal.UseExceptions()
 
 # ── Tabella satelliti ──────────────────────────────────────────────────────────
 SATELLITES = {
-    "Sentinel-1 (IW - EGMS)": {
-        "ASC":  {"azimut": -13,  "off_nadir": 39},
-        "DESC": {"azimut": 190,  "off_nadir": 39},
+    "Sentinel-1 (EGMS)": {
+        "ASC":  {"azimut": -11.0, "off_nadir": 42.0},
+        "DESC": {"azimut": 191.0, "off_nadir": 38.0},
         "band": "C",
     },
-    "ERS-1/2 / ENVISAT": {
-        "ASC":  {"azimut": -15,  "off_nadir": 23},
-        "DESC": {"azimut": 165,  "off_nadir": 23},
+    "Sentinel-1 (generico)": {
+        "ASC":  {"azimut": -12.0, "off_nadir": 33.0},
+        "DESC": {"azimut": 192.0, "off_nadir": 33.0},
         "band": "C",
+    },
+    "ERS / Envisat": {
+        "ASC":  {"azimut": -13.0, "off_nadir": 23.0},
+        "DESC": {"azimut": 193.0, "off_nadir": 23.0},
+        "band": "C",
+    },
+    "ALOS / ALOS-2": {
+        "ASC":  {"azimut": -10.0, "off_nadir": 34.0},
+        "DESC": {"azimut": 190.0, "off_nadir": 34.0},
+        "band": "L",
     },
     "RADARSAT-2": {
-        "ASC":  {"azimut": -10,  "off_nadir": 35},
-        "DESC": {"azimut": 190,  "off_nadir": 35},
+        "ASC":  {"azimut": -10.0, "off_nadir": 35.0},
+        "DESC": {"azimut": 190.0, "off_nadir": 35.0},
         "band": "C",
     },
-    "COSMO-SkyMed (1a gen.)": {
-        "ASC":  {"azimut": -15,  "off_nadir": 35},
-        "DESC": {"azimut": 165,  "off_nadir": 35},
-        "band": "X",
-    },
-    "COSMO-SkyMed 2nd Gen": {
-        "ASC":  {"azimut": -15,  "off_nadir": 35},
-        "DESC": {"azimut": 165,  "off_nadir": 35},
+    "COSMO-SkyMed": {
+        "ASC":  {"azimut": -15.0, "off_nadir": 30.0},
+        "DESC": {"azimut": 195.0, "off_nadir": 30.0},
         "band": "X",
     },
     "TerraSAR-X / TanDEM-X": {
-        "ASC":  {"azimut": -10,  "off_nadir": 35},
-        "DESC": {"azimut": 170,  "off_nadir": 35},
+        "ASC":  {"azimut": -10.0, "off_nadir": 35.0},
+        "DESC": {"azimut": 190.0, "off_nadir": 35.0},
         "band": "X",
     },
     "Personalizzato": {
-        "ASC":  {"azimut": -13,  "off_nadir": 39},
-        "DESC": {"azimut": 190,  "off_nadir": 39},
+        "ASC":  {"azimut": -11.0, "off_nadir": 42.0},
+        "DESC": {"azimut": 191.0, "off_nadir": 38.0},
         "band": "-",
     },
 }

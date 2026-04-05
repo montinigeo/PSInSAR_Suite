@@ -446,6 +446,7 @@ class EgmsDialog(QDialog):
             'Sentinel-1 (generico)':   (-12.0,    33.0,    192.0,    33.0,    True),
             'ERS / Envisat':           (-13.0,    23.0,    193.0,    23.0,    True),
             'ALOS / ALOS-2':           (-10.0,    34.0,    190.0,    34.0,    True),
+            'RADARSAT-2':           (-10.0,    35.0,    190.0,    35.0,    True),
             'COSMO-SkyMed':            (-15.0,    30.0,    195.0,    30.0,    True),
             'TerraSAR-X / TanDEM-X':   (-10.0,    35.0,    190.0,    35.0,    True),
             'Personalizzato…':          None,
