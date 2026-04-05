@@ -12,14 +12,28 @@ InSAR Suite è un plugin QGIS che raccoglie in un'unica toolbar dedicata gli str
 
 La versione 3.0 ridisegna completamente il modulo TS: la verifica di normalità è sostituita da un modulo di qualità del dato più completo, vengono aggiunti tre nuovi strumenti (rilevamento anomalie temporali, confronto tra zone, selettore di trasformazione in tempo reale) e la geostatistica è spostata su script standalone.
 
+La versione 3.1 introduce il fix del crash matplotlib alla chiusura di QGIS, aggiunge controlli di validità del layer attivo nei moduli TS (con messaggio di avviso se il layer attivo è un raster invece di un layer PS vettoriale), aggiunge il controllo del CRS nel modulo VIS, aggiorna i preset satellitari di VIS e EWUD con valori corretti per orbita ascendente e discendente e aggiunge RADARSAT-2.
+
 ### Moduli
 
 | Modulo | Descrizione |
 |--------|-------------|
 | **InSAR Load** | Caricamento layer PS da GeoPackage, Shapefile o GDB tramite un quadro di unione poligonale, con attivazione automatica al clic su mappa. Supporta anche il ricaricamento di un quadro già presente nel progetto. |
-| **InSAR EWUD** | Ricostruzione del vettore velocità nel piano Est-Ovest / Up-Down dalle velocità LOS di coppie ascending/descending. Preset satellitari inclusi (Sentinel-1 EGMS, ERS/Envisat, COSMO-SkyMed, TerraSAR-X, ALOS). Output con campi Na e Nd (numero PS per cella). |
-| **InSAR VIS** | Calcolo della percentuale di movimento rilevabile (pc_mov) in funzione della geometria SAR e della morfologia del terreno (Aspect/Slope da DEM). Elaborazione tramite QgsTask (GUI non bloccante). |
+| **InSAR EWUD** | Ricostruzione del vettore velocità nel piano Est-Ovest / Up-Down dalle velocità LOS di coppie ascending/descending. Preset satellitari inclusi (Sentinel-1 EGMS, Sentinel-1 generico, ERS/Envisat, ALOS/ALOS-2, RADARSAT-2, COSMO-SkyMed, TerraSAR-X/TanDEM-X). Output con campi Na e Nd (numero PS per cella). |
+| **InSAR VIS** | Calcolo della percentuale di movimento rilevabile (pc_mov) in funzione della geometria SAR e della morfologia del terreno (Aspect/Slope da DEM). Il DEM viene ritagliato alla risoluzione originale con snap to grid (targetAlignedPixels), garantendo valori di aspect e slope identici a quelli calcolati direttamente in QGIS. Preset satellitari inclusi (stessi di EWUD). Elaborazione tramite QgsTask (GUI non bloccante). |
 | **InSAR TS** | Analisi serie storiche: qualità del dato, analisi cinematica automatica (con layer temporaneo in QGIS), scomposizione STL, analisi non lineare piecewise (pwlf), rilevamento anomalie temporali, confronto tra zone. |
+
+### Preset satellitari (moduli VIS e EWUD)
+
+| Satellite | Banda | ASC az | ASC on | DESC az | DESC on |
+|-----------|-------|--------|--------|---------|---------|
+| Sentinel-1 (EGMS) | C | -11° | 42° | 191° | 38° |
+| Sentinel-1 (generico) | C | -12° | 33° | 192° | 33° |
+| ERS / Envisat | C | -13° | 23° | 193° | 23° |
+| ALOS / ALOS-2 | L | -10° | 34° | 190° | 34° |
+| RADARSAT-2 | C | -10° | 35° | 190° | 35° |
+| COSMO-SkyMed | X | -15° | 30° | 195° | 30° |
+| TerraSAR-X / TanDEM-X | X | -10° | 35° | 190° | 35° |
 
 ### Strumenti del modulo TS (v3.0)
 
@@ -48,7 +62,7 @@ La versione 3.0 ridisegna completamente il modulo TS: la verifica di normalità 
 Le nuove versioni vengono pubblicate direttamente nel repository e sono immediatamente disponibili senza attese di revisione.
 
 **Da ZIP:**
-1. Scarica `InSAR_Suite_v3.0_QGIS.zip` dalla pagina [Releases](../../releases)
+1. Scarica `InSAR_Suite_v3.1_QGIS.zip` dalla pagina [Releases](../../releases)
 2. In QGIS: *Plugin → Gestisci e installa plugin → Installa da ZIP*
 3. Abilita il plugin dall'elenco degli installati
 
@@ -62,10 +76,10 @@ Copiare la cartella `InSAR_Suite/` nella directory dei plugin di QGIS:
 
 1. **Load** — Carica il layer PS puntuale selezionando i poligoni del quadro di unione
 2. **EWUD** — Crea la griglia e ricostruisci il vettore velocità EW-UD da ascending/descending
-3. **VIS** — Calcola pc_mov sul layer PS con un DEM
+3. **VIS** — Seleziona il layer PS e il DEM, definisci l'estensione di elaborazione e calcola pc_mov
 4. **TS** — Imposta il layer PS come attivo, seleziona i punti sulla mappa, avvia le analisi nell'ordine: Qualità del dato → Analisi automatica → Scomposizione STL → Non lineare → Anomalie → Confronto zone
 
-> I moduli TS richiedono che il layer PS sia attivo e che siano presenti punti selezionati. In assenza di selezione o layer attivo il plugin mostra una finestra di avviso con le istruzioni per procedere.
+> I moduli TS richiedono che il layer PS vettoriale sia attivo e che siano presenti punti selezionati. Se il layer attivo è un raster o non è presente alcuna selezione, il plugin mostra una finestra di avviso con le istruzioni per procedere.
 
 ### Formato dati atteso per il modulo TS
 
@@ -85,14 +99,28 @@ InSAR Suite is a QGIS plugin that consolidates PSI (Persistent Scatterer Interfe
 
 Version 3.0 completely redesigns the TS module: the normality check is replaced by a more comprehensive data quality analysis, three new tools are added (temporal anomaly detection, multi-zone comparison, real-time transformation selector), and geostatistics is moved to a standalone script.
 
+Version 3.1 introduces a fix for the matplotlib crash on QGIS exit, adds layer validity checks in TS modules (with a warning if the active layer is a raster instead of a PS vector layer), adds a CRS check in the VIS module, updates satellite presets in VIS and EWUD with correct ascending/descending azimuth values, and adds RADARSAT-2.
+
 ### Modules
 
 | Module | Description |
 |--------|-------------|
 | **InSAR Load** | Loads PSI point layers from GeoPackage, Shapefile or GDB using a polygon index layer, with automatic loading on map selection. Also supports reactivation of an index already loaded in the project. |
-| **InSAR EWUD** | Reconstructs the velocity vector in the East-West / Up-Down plane from ascending/descending LOS velocities. Includes satellite presets (Sentinel-1 EGMS, ERS/Envisat, COSMO-SkyMed, TerraSAR-X, ALOS). Output includes Na and Nd fields (PS count per cell). |
-| **InSAR VIS** | Calculates detectable movement percentage (pc_mov) based on SAR acquisition geometry and terrain morphology (Aspect/Slope from DEM). Runs as a QgsTask (non-blocking GUI). |
+| **InSAR EWUD** | Reconstructs the velocity vector in the East-West / Up-Down plane from ascending/descending LOS velocities. Includes satellite presets (Sentinel-1 EGMS, Sentinel-1 generic, ERS/Envisat, ALOS/ALOS-2, RADARSAT-2, COSMO-SkyMed, TerraSAR-X/TanDEM-X). Output includes Na and Nd fields (PS count per cell). |
+| **InSAR VIS** | Calculates detectable movement percentage (pc_mov) based on SAR acquisition geometry and terrain morphology (Aspect/Slope from DEM). The DEM is clipped at its original resolution with snap to grid (targetAlignedPixels), ensuring that aspect and slope values are identical to those calculated directly in QGIS. Includes satellite presets (same as EWUD). Runs as a QgsTask (non-blocking GUI). |
 | **InSAR TS** | Time series analysis: data quality check, automatic mean series (with temporary QGIS layer), STL seasonal decomposition, piecewise non-linear analysis (pwlf), temporal anomaly detection, multi-zone comparison. |
+
+### Satellite presets (VIS and EWUD modules)
+
+| Satellite | Band | ASC az | ASC on | DESC az | DESC on |
+|-----------|------|--------|--------|---------|---------|
+| Sentinel-1 (EGMS) | C | -11° | 42° | 191° | 38° |
+| Sentinel-1 (generic) | C | -12° | 33° | 192° | 33° |
+| ERS / Envisat | C | -13° | 23° | 193° | 23° |
+| ALOS / ALOS-2 | L | -10° | 34° | 190° | 34° |
+| RADARSAT-2 | C | -10° | 35° | 190° | 35° |
+| COSMO-SkyMed | X | -15° | 30° | 195° | 30° |
+| TerraSAR-X / TanDEM-X | X | -10° | 35° | 190° | 35° |
 
 ### TS module tools (v3.0)
 
@@ -121,7 +149,7 @@ Version 3.0 completely redesigns the TS module: the normality check is replaced 
 New versions are published directly to the repository and are immediately available without review delays.
 
 **From ZIP:**
-1. Download `InSAR_Suite_v3.0_QGIS.zip` from the [Releases](../../releases) page
+1. Download `InSAR_Suite_v3.1_QGIS.zip` from the [Releases](../../releases) page
 2. In QGIS: *Plugins → Manage and Install Plugins → Install from ZIP*
 3. Enable the plugin from the installed list
 
@@ -135,10 +163,10 @@ Copy the `InSAR_Suite/` folder to the QGIS plugins directory:
 
 1. **Load** — Load the PS point layer by selecting polygons from the index layer
 2. **EWUD** — Create the resampling grid and reconstruct the EW-UD velocity vector from ascending/descending pairs
-3. **VIS** — Calculate pc_mov on the PS layer using a DEM
+3. **VIS** — Select the PS layer and DEM, define the processing extent and calculate pc_mov
 4. **TS** — Set the PS layer as active, select points on the map, run the analyses in order: Data quality → Automatic analysis → STL decomposition → Non-linear → Anomalies → Zone comparison
 
-> TS modules require the PS layer to be active and points to be selected. If no selection or active layer is present, the plugin shows a dedicated warning dialog with instructions.
+> TS modules require the PS vector layer to be active and points to be selected. If the active layer is a raster or no selection is present, the plugin shows a dedicated warning dialog with instructions.
 
 ### Expected data format for the TS module
 
